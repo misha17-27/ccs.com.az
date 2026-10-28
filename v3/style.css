@@ -85,7 +85,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
   font-weight: 800;
   text-transform: uppercase;
   font-size: clamp(1.6rem, 6vw, 5.2rem);
-  line-height: .95;
+  line-height: 1.13;
   letter-spacing: -.03em;
   margin: 0;
 }
@@ -316,7 +316,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
   font-weight: 800;
   text-transform: uppercase;
   font-size: clamp(2rem, 11vw, 8.4rem);
-  line-height: .94;
+  line-height: 1.08;
   letter-spacing: -.04em;
   margin: .3em 0 0;
 }
@@ -507,7 +507,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 }
 .pain__title {
   margin: 0;
-  font: 800 clamp(1.25rem, 2.6vw, 2.3rem)/1.02 var(--f-display);
+  font: 800 clamp(1.25rem, 2.6vw, 2.3rem)/1.15 var(--f-display);
   text-transform: uppercase;
   letter-spacing: -.025em;
 }
@@ -580,12 +580,12 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 
 .tile__title {
   margin: 0;
-  font: 800 clamp(1.1rem, 1.9vw, 1.65rem)/1.08 var(--f-display);
+  font: 800 clamp(1.1rem, 1.9vw, 1.65rem)/1.14 var(--f-display);
   text-transform: uppercase;
   letter-spacing: -.02em;
   overflow-wrap: break-word;
 }
-.tile__title--xl { font-size: clamp(1.8rem, 4.2vw, 3.6rem); line-height: .98; }
+.tile__title--xl { font-size: clamp(1.8rem, 4.2vw, 3.6rem); line-height: 1.1; }
 .tile__lead { margin: 14px 0 0; max-width: 22em; opacity: .8; }
 
 .tile__list {
@@ -643,7 +643,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 .about { background: var(--white); }
 .about__title {
   margin: 0 0 clamp(36px, 5vw, 72px);
-  font: 900 clamp(2.2rem, 10.5vw, 9.6rem)/.9 var(--f-display);
+  font: 900 clamp(2.2rem, 10.5vw, 9.6rem)/1.1 var(--f-display);
   letter-spacing: -.05em;
   white-space: nowrap;
 }

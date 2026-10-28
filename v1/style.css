@@ -570,7 +570,7 @@ ul, ol { padding: 0; list-style: none; }
   font-weight: 800;
   text-transform: uppercase;
   font-size: clamp(3rem, 19cqi, 9.5rem);
-  line-height: .9;
+  line-height: 1.1;
   letter-spacing: -.035em;
   margin-top: 12px;
 }

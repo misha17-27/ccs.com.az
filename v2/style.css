@@ -645,3 +645,16 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .js [data-reveal] { opacity: 1; translate: none; }
   .wa-float::before { display: none; }
 }
+
+/* ---------- Instagram feed (grid styles: assets/css/instagram-feed.css) ---------- */
+.ig {
+  --ig-handle: var(--accent);
+  --ig-text: var(--muted);
+  --ig-radius: 16px;
+  --ig-placeholder: var(--bg-soft);
+  --ig-shine: #fff;
+  --ig-overlay: rgba(2, 32, 84, .55);
+  --ig-focus: var(--accent);
+  border-top: 1px solid var(--line);
+}
+.ig .ig-head__handle { color: var(--ink); font-weight: 800; letter-spacing: -.02em; }

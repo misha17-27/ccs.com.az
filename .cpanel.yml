@@ -7,3 +7,4 @@ deployment:
     - /bin/cp -R v1 $DEPLOYPATH
     - /bin/cp -R v2 $DEPLOYPATH
     - /bin/cp -R v3 $DEPLOYPATH
+    - /bin/cp -R api $DEPLOYPATH

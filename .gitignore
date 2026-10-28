@@ -3,3 +3,6 @@
 
 # Source presentation (kept locally, not part of the site)
 Versiya1.pdf
+
+# Instagram covers cached by api/instagram.php on the server
+media/

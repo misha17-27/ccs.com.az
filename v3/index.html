@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Onest:wght@400;500;600;700&family=Unbounded:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/instagram-feed.css">
   <link rel="stylesheet" href="style.css">
   <script>document.documentElement.classList.add("js");</script>
 </head>
@@ -438,37 +439,6 @@
       </div>
     </section>
 
-    <!-- SECTION: instagram -->
-    <section class="section insta" id="instagram" aria-labelledby="instaTitle">
-      <div class="container">
-        <header class="insta__head">
-          <div>
-            <p class="kicker">Instagram</p>
-            <h2 class="display" id="instaTitle">VİDEOLARIMIZDA<br>DAHA ÇOXU</h2>
-          </div>
-          <a class="btn btn--ghost" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener">@costcontrol.services <span class="arr" aria-hidden="true">↗</span></a>
-        </header>
-
-        <div class="reels">
-          <a class="reel reel--ink" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener" data-reveal>
-            <span class="reel__top"><span class="reel__tag">Reels</span><span class="reel__play" aria-hidden="true"></span></span>
-            <span class="reel__title">ƏRZAQ<br>İSRAFI</span>
-            <span class="reel__meta">Mətbəxdə pul necə itir — videoya Instagram-da baxın</span>
-          </a>
-          <a class="reel reel--blue" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener" data-reveal style="--d:.08s">
-            <span class="reel__top"><span class="reel__tag">Reels</span><span class="reel__play" aria-hidden="true"></span></span>
-            <span class="reel__title">BU OĞURLUQDUR<small>satış deyil</small></span>
-            <span class="reel__meta">Kassada və anbarda sui-istifadə — videoya Instagram-da baxın</span>
-          </a>
-          <a class="reel reel--paper" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener" data-reveal style="--d:.16s">
-            <span class="reel__top"><span class="reel__tag">Reels</span><span class="reel__play" aria-hidden="true"></span></span>
-            <span class="reel__title">ANBAR<br>NƏZARƏTİ</span>
-            <span class="reel__meta">Sayım, qalıq, dövriyyə — videoya Instagram-da baxın</span>
-          </a>
-        </div>
-      </div>
-    </section>
-
     <!-- SECTION: contact -->
     <section class="section contact" id="elaqe" aria-labelledby="contactTitle">
       <div class="container contact__grid">
@@ -535,6 +505,21 @@
       </div>
     </section>
 
+    <!-- SECTION: instagram-feed -->
+    <section class="section insta ig" id="instagram" data-ig-section aria-labelledby="instaTitle">
+      <div class="container">
+        <header class="insta__head">
+          <div>
+            <p class="kicker">Instagram</p>
+            <h2 class="display" id="instaTitle">VİDEOLARIMIZDA<br>DAHA ÇOXU</h2>
+          </div>
+          <a class="btn btn--ghost" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener">@costcontrol.services <span class="arr" aria-hidden="true">↗</span></a>
+        </header>
+
+        <div class="ig-feed" data-ig-feed data-ig-limit="12"></div>
+        <div class="ig-cta"><a class="btn btn--ink" href="https://www.instagram.com/costcontrol.services/" target="_blank" rel="noopener">Instagram-da izləyin <span class="arr" aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
   </main>
 
   <!-- SECTION: footer -->
@@ -588,5 +573,6 @@
   </nav>
 
   <script src="script.js" defer></script>
+  <script src="../assets/js/instagram-feed.js" defer></script>
 </body>
 </html>

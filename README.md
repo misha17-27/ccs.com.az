@@ -29,6 +29,8 @@ python -m http.server 8080
 Репозиторий клонируется в `/home/ccscom/repositories/ccs.com.az`. При «Deploy HEAD Commit» cPanel выполняет `.cpanel.yml` — копирует `index.html`, `assets/`, `v1/`, `v2/`, `v3/`, `api/` в `/home/ccscom/public_html/`.
 Порядок: Manage → Pull or Deploy → Update from Remote → Deploy HEAD Commit.
 
+Сайт идёт через Cloudflare, который кэширует CSS/JS на несколько часов. Поэтому ссылки на них в HTML написаны как `style.css?v=dev`, а при деплое `.cpanel.yml` заменяет `dev` на метку времени — после каждого деплоя браузеры и Cloudflare сразу берут новые файлы. Новые CSS/JS подключать так же, с `?v=dev`.
+
 ## Instagram — лента последних публикаций
 
 Внизу каждой версии — сетка из 12 последних постов @costcontrol.services (`assets/js/instagram-feed.js`, стили — `assets/css/instagram-feed.css`).

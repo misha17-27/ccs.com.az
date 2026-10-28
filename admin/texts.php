@@ -37,16 +37,13 @@ foreach ($db->query('SELECT * FROM texts') as $row) {
     $rows[$row['key']] = $row;
 }
 
-$active = $group === 'seo' ? 'seo' : ($group === 'about' ? 'about' : 'texts');
-admin_header($group === 'seo' ? t('nav.seo') : t('nav.texts'), $active, $user);
+admin_header(t('nav.texts'), $group === 'about' ? 'about' : 'texts', $user);
 ?>
-<?php if ($group !== 'seo'): ?>
-  <nav class="tabs">
-    <?php foreach (TEXT_GROUPS as $g => $labels): if ($g === 'seo') continue; ?>
-      <a href="<?= $self ?>?g=<?= $g ?>" class="<?= $g === $group ? 'is-active' : '' ?>"><?= e(tl($labels)) ?></a>
-    <?php endforeach; ?>
-  </nav>
-<?php endif; ?>
+<nav class="tabs">
+  <?php foreach (TEXT_GROUPS as $g => $labels): ?>
+    <a href="<?= $self ?>?g=<?= $g ?>" class="<?= $g === $group ? 'is-active' : '' ?>"><?= e(tl($labels)) ?></a>
+  <?php endforeach; ?>
+</nav>
 
 <form method="post" class="card stack" style="max-width: 980px">
   <?= csrf_field() ?>
@@ -58,7 +55,6 @@ admin_header($group === 'seo' ? t('nav.seo') : t('nav.texts'), $active, $user);
       <?php endforeach; ?>
     </div>
   </div>
-  <?php if ($group === 'seo'): ?><p class="muted small"><?= e(t('seo.hint')) ?></p><?php endif; ?>
   <?php foreach ($fields as $key => [$g, $labelAz, $labelRu, $type]): ?>
     <?= ml_field("t[{$key}]", admin_lang() === 'ru' ? $labelRu : $labelAz, row_ml($rows[$key] ?? [], 'value'), $type, true) ?>
   <?php endforeach; ?>

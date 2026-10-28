@@ -8,7 +8,7 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 function db(): PDO
 {
@@ -41,6 +41,10 @@ function migrate(PDO $pdo): void
             create_schema_v1($pdo);
             seed_content($pdo);
         }
+        if ($version < 2) {
+            create_schema_v2($pdo);
+            seed_pages($pdo);
+        }
         $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
         $pdo->commit();
     } catch (Throwable $e) {
@@ -49,10 +53,15 @@ function migrate(PDO $pdo): void
     }
 }
 
+/** Column definitions col_az, col_ru, col_en; $extra applies to the AZ column only. */
+function ml_columns(string $col, string $extra = ''): string
+{
+    return implode(', ', array_map(static fn($l) => "{$col}_{$l} TEXT" . ($l === 'az' ? $extra : ''), array_keys(CONTENT_LANGS)));
+}
+
 function create_schema_v1(PDO $pdo): void
 {
-    $ml = static fn(string $col, string $extra = ''): string =>
-        implode(', ', array_map(static fn($l) => "{$col}_{$l} TEXT" . ($l === 'az' ? $extra : ''), array_keys(CONTENT_LANGS)));
+    $ml = 'ml_columns';
 
     $pdo->exec("CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -167,5 +176,46 @@ function seed_content(PDO $pdo): void
     $setting = $pdo->prepare('INSERT INTO settings (key, value) VALUES (?, ?)');
     foreach (SETTING_FIELDS as $key => $def) {
         $setting->execute([$key, $def[4]]);
+    }
+}
+
+/** v2: pages with their own address and SEO (SEO used to be two site-wide texts). */
+function create_schema_v2(PDO $pdo): void
+{
+    $ml = 'ml_columns';
+    $pdo->exec("CREATE TABLE pages (
+        key TEXT PRIMARY KEY,
+        slug TEXT NOT NULL UNIQUE,
+        {$ml('name')},
+        {$ml('seo_title')},
+        {$ml('seo_description')},
+        og_image TEXT,
+        updated_at TEXT)");
+}
+
+function seed_pages(PDO $pdo): void
+{
+    $t = now();
+
+    // Texts added after v1 (the FAQ block)
+    $text = $pdo->prepare('INSERT OR IGNORE INTO texts (key, value_az, updated_at) VALUES (?, ?, ?)');
+    foreach (TEXT_FIELDS as $key => $def) {
+        $text->execute([$key, $def[4], $t]);
+    }
+
+    // The home page keeps the SEO texts edited before pages existed.
+    $old = [];
+    foreach ($pdo->query("SELECT * FROM texts WHERE key IN ('seo.title', 'seo.description')") as $row) {
+        $old[$row['key']] = [$row['value_az'], $row['value_ru'], $row['value_en']];
+    }
+    $pdo->exec("DELETE FROM texts WHERE key IN ('seo.title', 'seo.description')");
+
+    $page = $pdo->prepare('INSERT INTO pages (key, slug, name_az, seo_title_az, seo_title_ru, seo_title_en,
+        seo_description_az, seo_description_ru, seo_description_en, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    foreach (PAGES as $key => $def) {
+        [$name, $title, $description] = SEED_PAGES[$key];
+        $title = $key === 'home' && isset($old['seo.title']) ? $old['seo.title'] : [$title, null, null];
+        $description = $key === 'home' && isset($old['seo.description']) ? $old['seo.description'] : [$description, null, null];
+        $page->execute([$key, $def['slug'], $name, ...$title, ...$description, $t]);
     }
 }

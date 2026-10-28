@@ -31,6 +31,7 @@ const ICONS = [
     'server' => '<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
     'refresh' => '<path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/>',
     'x' => '<path d="M6 6l12 12M18 6 6 18"/>',
+    'pages' => '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
     // service icons
     'finance' => '<path d="M12 3v18M16 7.5c0-1.7-1.8-3-4-3s-4 1.3-4 3 1.8 2.6 4 3 4 1.3 4 3-1.8 3-4 3-4-1.3-4-3"/>',
     'analysis' => '<path d="M4 20V10M10 20V4M16 20v-5"/><circle cx="17" cy="8" r="3"/><path d="m19.2 10.2 2 2"/>',
@@ -61,14 +62,14 @@ function admin_nav(array $user): array
             ['requests', 'requests.php', 'inbox'],
         ],
         'nav.content' => [
+            ['texts', 'texts.php', 'sliders'],
+            ['pages', 'pages.php', 'pages'],
             ['services', 'services.php', 'briefcase'],
             ['partners', 'partners.php', 'globe'],
             ['faq', 'faq.php', 'help'],
             ['about', 'texts.php?g=about', 'users'],
-            ['texts', 'texts.php', 'sliders'],
         ],
         'nav.site' => [
-            ['seo', 'texts.php?g=seo', 'search'],
             ['instagram', 'instagram.php', 'instagram'],
         ],
     ];
@@ -210,13 +211,14 @@ function auth_footer(bool $turnstile = false): void
 
 /**
  * One field per content language (AZ/RU/EN) with tabs; posts as name[az], name[ru], name[en].
- * $values: ['az' => …, 'ru' => …, 'en' => …]
+ * $values: ['az' => …, 'ru' => …, 'en' => …]; $limit > 0 shows a "42 / 60" character counter.
  */
-function ml_field(string $name, string $label, array $values, string $type = 'line', bool $required = false): string
+function ml_field(string $name, string $label, array $values, string $type = 'line', bool $required = false, int $limit = 0): string
 {
     $id = 'f-' . preg_replace('/[^a-z0-9]+/i', '-', $name);
-    $html = '<div class="ml" data-ml><div class="ml__head"><span class="label">' . e($label)
-        . ($required ? ' <span class="req">*</span>' : '') . '</span><div class="ml__tabs" role="tablist">';
+    $html = '<div class="ml" data-ml' . ($limit ? ' data-limit="' . $limit . '"' : '') . '><div class="ml__head"><span class="label">' . e($label)
+        . ($required ? ' <span class="req">*</span>' : '') . '</span>'
+        . ($limit ? '<span class="ml__count" data-ml-count aria-live="polite"></span>' : '') . '<div class="ml__tabs" role="tablist">';
     foreach (CONTENT_LANGS as $code => $short) {
         $filled = trim((string)($values[$code] ?? '')) !== '';
         $html .= '<button type="button" role="tab" data-ml-tab="' . $code . '" class="' . ($code === 'az' ? 'is-active ' : '')

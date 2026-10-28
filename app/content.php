@@ -7,17 +7,17 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-/** Text groups shown as tabs on the "Texts" page; 'seo' has its own menu item. */
+/** Text groups shown as tabs on the "Texts" page. SEO is edited per page (see PAGES). */
 const TEXT_GROUPS = [
     'hero' => ['az' => 'Əsas ekran', 'ru' => 'Главный экран'],
     'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас'],
     'services' => ['az' => 'Xidmətlər bölməsi', 'ru' => 'Блок услуг'],
     'clients' => ['az' => 'Müştərilər', 'ru' => 'Клиенты'],
     'experience' => ['az' => 'Təcrübə', 'ru' => 'Опыт'],
+    'faq' => ['az' => 'Suallar bölməsi', 'ru' => 'Блок вопросов'],
     'contact' => ['az' => 'Əlaqə bölməsi', 'ru' => 'Блок контактов'],
     'instagram' => ['az' => 'Instagram', 'ru' => 'Instagram'],
     'footer' => ['az' => 'Footer', 'ru' => 'Подвал'],
-    'seo' => ['az' => 'SEO', 'ru' => 'SEO'],
 ];
 
 /** key => [group, label az, label ru, 'line'|'area', default (az)] */
@@ -42,6 +42,9 @@ const TEXT_FIELDS = [
     'experience.p1' => ['experience', 'Abzas 1', 'Абзац 1', 'area', '200-dən çox ölkənin qatıldığı Taekvondo üzrə Dünya Çempionatında qida sektorunun keyfiyyətə nəzarət və tənzimləmə prosesinin birbaşa həyata keçirilməsi.'],
     'experience.p2' => ['experience', 'Abzas 2', 'Абзац 2', 'area', 'Beynəlxalq fəaliyyət: Azərbaycanla yanaşı, Qazaxıstan kimi xarici bazarlarda da milli mətbəx layihələri ilə əməkdaşlıq.'],
 
+    'faq.title' => ['faq', 'Başlıq', 'Заголовок', 'line', 'Tez-tez verilən suallar'],
+    'faq.lead' => ['faq', 'Mətn', 'Текст', 'area', 'Cavabını tapmadığınız sual varsa, bizə birbaşa yazın — məmnuniyyətlə izah edərik.'],
+
     'contact.title' => ['contact', 'Başlıq', 'Заголовок', 'line', 'Bizimlə əlaqə'],
     'contact.lead' => ['contact', 'Mətn', 'Текст', 'area', 'Müraciətinizi qoyun — mütəxəssisimiz sizinlə əlaqə saxlayacaq və restoranınız üçün uyğun həlli müzakirə edəcək.'],
     'contact.address' => ['contact', 'Ünvan', 'Адрес', 'line', 'Bakı şəhəri, Nizami rayonu, Heydər Əliyev prospekti 5'],
@@ -50,9 +53,35 @@ const TEXT_FIELDS = [
     'instagram.text' => ['instagram', 'Mətn', 'Текст', 'area', 'Restoran biznesi üçün yeni videolar və praktiki məsləhətlər — mütəmadi olaraq Instagram səhifəmizdə.'],
 
     'footer.text' => ['footer', 'Qısa təsvir', 'Краткое описание', 'area', 'Restoran və iaşə biznesi üçün xərclərə nəzarət, maya dəyəri və maliyyə şəffaflığı.'],
+];
 
-    'seo.title' => ['seo', 'Səhifə başlığı (title)', 'Заголовок страницы (title)', 'line', 'Cost Control Services — restoranlar üçün xərclərə nəzarət | Bakı'],
-    'seo.description' => ['seo', 'Təsvir (meta description)', 'Описание (meta description)', 'area', 'Cost Control Services — iaşə və restoran sektoru üçün maliyyə və P&L, xərc analizi, maya dəyəri və texnoloji kartlar, satınalma, inventar və daxili nəzarət xidmətləri. Bakı.'],
+/**
+ * Site pages: fixed keys with an editable address and SEO. The page text lives in the
+ * 'groups' of TEXT_FIELDS and in the 'items' tables; their translations make up the "Text" status.
+ */
+const PAGES = [
+    'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'groups' => ['hero', 'instagram'], 'items' => []],
+    'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'groups' => ['about', 'experience'], 'items' => []],
+    'services' => ['az' => 'Xidmətlər (siyahı)', 'ru' => 'Услуги (список)', 'slug' => 'xidmetler', 'groups' => ['services'], 'items' => ['services']],
+    'clients' => ['az' => 'Müştərilər', 'ru' => 'Клиенты', 'slug' => 'musteriler', 'groups' => ['clients'], 'items' => []],
+    'faq' => ['az' => 'Suallar', 'ru' => 'Вопросы', 'slug' => 'suallar', 'groups' => ['faq'], 'items' => ['faqs']],
+    'contact' => ['az' => 'Əlaqə', 'ru' => 'Контакты', 'slug' => 'elaqe', 'groups' => ['contact'], 'items' => []],
+];
+
+/** Addresses the site itself uses, so pages cannot take them. */
+const RESERVED_SLUGS = ['admin', 'api', 'app', 'assets', 'media', 'uploads', 'index', 'v1', 'v2', 'v3', 'az', 'ru', 'en'];
+
+/**
+ * Until the chosen design is converted to PHP the site is static and one page long,
+ * so "Open" shows the page's section on a prototype. Remove once the pages are live.
+ */
+const PAGE_PREVIEW = [
+    'home' => '/',
+    'about' => '/v1/#haqqimizda',
+    'services' => '/v1/#xidmetler',
+    'clients' => '/v1/#musteriler',
+    'faq' => '/v2/#suallar',
+    'contact' => '/v1/#elaqe',
 ];
 
 /** Settings page fields: key => [section, label az, label ru, input type, default] */
@@ -117,6 +146,16 @@ const SEED_PARTNERS = [
     ['Pivnaya Apteka', 'pivnaya-apteka'], ['Manzara', 'manzara'], ['Resant Hotels & Restaurants', 'resant'],
     ['Caviz Tea & Lounge', 'caviz'], ['Stop Cafe', 'stop-cafe'], ['Water Garden', 'water-garden'],
     ['Lupin Coffee', 'lupin-coffee'], ['Best Place Baku', 'best-place'],
+];
+
+/** key => [menu name, SEO title, SEO description] (AZ) */
+const SEED_PAGES = [
+    'home' => ['Ana səhifə', 'Restoranlar üçün xərclərə nəzarət — Cost Control Services', 'Restoran və iaşə biznesi üçün xərclərə nəzarət: maliyyə və P&L, maya dəyəri, texnoloji kartlar, satınalma, inventar və daxili nəzarət. Bakı.'],
+    'about' => ['Haqqımızda', 'Haqqımızda — Cost Control Services', 'Cost Control 2021-ci ildən iaşə və restoran sektorunda xərclərə nəzarət, maya dəyəri və maliyyə şəffaflığı üzrə peşəkar xidmət göstərir.'],
+    'services' => ['Xidmətlər', 'Xərclərə nəzarət xidmətləri — Cost Control Services', 'Maliyyə və P&L, xərc analizi, xərclərin optimallaşdırılması, maya dəyəri və texnoloji kartlar, satınalma, inventar və daxili nəzarət — restoranlar üçün.'],
+    'clients' => ['Müştərilər', 'Müştərilərimiz — Cost Control Services', 'Restoran, kafe, lounge və otel brendləri: Cost Control Services ilə əməkdaşlıq edən şirkətlər.'],
+    'faq' => ['Suallar', 'Tez-tez verilən suallar — Cost Control Services', 'Restoranlar üçün xərclərə nəzarət xidmətləri haqqında suallar və cavablar: kimlərlə işləyirik, hansı xidmətləri göstəririk, necə əlaqə saxlamaq olar.'],
+    'contact' => ['Əlaqə', 'Əlaqə — Cost Control Services, Bakı', 'Cost Control Services ilə əlaqə: +994 55 855 61 52, WhatsApp və müraciət forması. Bakı, Nizami rayonu, Heydər Əliyev prospekti 5.'],
 ];
 
 const SEED_FAQS = [

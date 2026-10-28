@@ -16,6 +16,17 @@
   if (backdrop) backdrop.addEventListener('click', function () { setSidebar(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setSidebar(false); });
 
+  // "42 / 60" counter on multi-language fields with a length limit
+  function updateCount(ml) {
+    var out = ml.querySelector('[data-ml-count]');
+    if (!out) return;
+    var field = ml.querySelector('[data-ml-pane]:not([hidden]) input, [data-ml-pane]:not([hidden]) textarea');
+    var len = field ? Array.from(field.value.trim()).length : 0;
+    var limit = Number(ml.dataset.limit);
+    out.textContent = len + ' / ' + limit;
+    out.classList.toggle('is-over', len > limit);
+  }
+
   // Language tabs on multi-language fields
   function initMl(root) {
     root.querySelectorAll('[data-ml]').forEach(function (ml) {
@@ -30,6 +41,7 @@
             t.setAttribute('aria-selected', String(on));
           });
           ml.querySelectorAll('[data-ml-pane]').forEach(function (p) { p.hidden = p.dataset.mlPane !== lang; });
+          updateCount(ml);
           var field = ml.querySelector('[data-ml-pane="' + lang + '"] input, [data-ml-pane="' + lang + '"] textarea');
           if (field) field.focus();
         });
@@ -39,11 +51,37 @@
           var lang = field.closest('[data-ml-pane]').dataset.mlPane;
           var tab = ml.querySelector('[data-ml-tab="' + lang + '"]');
           if (tab) tab.classList.toggle('is-filled', field.value.trim() !== '');
+          updateCount(ml);
         });
       });
+      updateCount(ml);
     });
   }
   initMl(document);
+
+  // Google snippet preview on the page form: follows the language tab last picked
+  var serp = document.querySelector('[data-serp]');
+  if (serp) {
+    var serpForm = serp.closest('form');
+    var serpLang = 'az';
+    var serpValue = function (name) {
+      var field = serpForm.querySelector('[name="' + name + '[' + serpLang + ']"]');
+      return field ? field.value.trim() : '';
+    };
+    var renderSerp = function () {
+      var name = serpValue('name');
+      serp.querySelector('[data-serp-title]').textContent = serpValue('seo_title') || (name ? name + ' — Cost Control Services' : '—');
+      serp.querySelector('[data-serp-desc]').textContent = serpValue('seo_description') || '—';
+      var slug = serpForm.querySelector('[data-serp-slug]');
+      if (slug) serp.querySelector('[data-serp-path]').textContent = slug.value.trim() ? ' › ' + slug.value.trim() : '';
+    };
+    serpForm.addEventListener('input', renderSerp);
+    serpForm.addEventListener('click', function (e) {
+      var tab = e.target.closest('[data-ml-tab]');
+      if (tab) { serpLang = tab.dataset.mlTab; renderSerp(); }
+    });
+    renderSerp();
+  }
 
   // "Switch all fields to language X" buttons
   document.querySelectorAll('[data-ml-all]').forEach(function (btn) {

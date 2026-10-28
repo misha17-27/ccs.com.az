@@ -24,6 +24,11 @@ python -m http.server 8080
 
 Затем открыть http://localhost:8080/.
 
+### Деплой (cPanel → Git Version Control)
+
+Репозиторий клонируется в `/home/ccscom/repositories/ccs.com.az`. При «Deploy HEAD Commit» cPanel выполняет `.cpanel.yml` — копирует `index.html`, `assets/`, `v1/`, `v2/`, `v3/` в `/home/ccscom/public_html/`.
+Порядок: Manage → Pull or Deploy → Update from Remote → Deploy HEAD Commit.
+
 ## Открытые вопросы (уточнить у заказчика)
 
 - Email: в презентации стоит шуточная заглушка, на сайте пока `info@ccs.com.az`.

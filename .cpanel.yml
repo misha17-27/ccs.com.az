@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/ccscom/public_html/
+    - /bin/cp index.html $DEPLOYPATH
+    - /bin/cp -R assets $DEPLOYPATH
+    - /bin/cp -R v1 $DEPLOYPATH
+    - /bin/cp -R v2 $DEPLOYPATH
+    - /bin/cp -R v3 $DEPLOYPATH

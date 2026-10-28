@@ -412,7 +412,9 @@
       </div>
 
       <!-- TODO (PHP): replace action="#" with the PHP handler and remove the JS demo submit -->
-      <form class="form" method="post" action="#" novalidate data-form data-reveal style="--delay:.1s">
+      <form class="form" method="post" action="/api/contact.php" novalidate data-form data-reveal style="--delay:.1s">
+        <input type="hidden" name="source" value="v1">
+        <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
         <div class="form__fields">
           <h3 class="form__title">Konsultasiya üçün müraciət</h3>
           <div class="field">

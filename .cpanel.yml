@@ -8,5 +8,10 @@ deployment:
     - /bin/cp -R v2 $DEPLOYPATH
     - /bin/cp -R v3 $DEPLOYPATH
     - /bin/cp -R api $DEPLOYPATH
+    # Admin panel: pages, PHP core (app/.htaccess denies web access) and the uploads folder rules.
+    # Uploaded files and the database stay on the server: uploads/* is git-ignored, the DB lives in ~/ccs-private.
+    - /bin/cp -R admin $DEPLOYPATH
+    - /bin/cp -R app $DEPLOYPATH
+    - /bin/cp -R uploads $DEPLOYPATH
     # Cache busting: every deploy gets a fresh ?v= on CSS/JS links (Cloudflare caches them for hours)
     - /bin/sed -i "s/?v=dev/?v=$(/bin/date +%Y%m%d%H%M%S)/g" ${DEPLOYPATH}v1/index.html ${DEPLOYPATH}v2/index.html ${DEPLOYPATH}v3/index.html

@@ -6,3 +6,9 @@ Versiya1.pdf
 
 # Instagram covers cached by api/instagram.php on the server
 media/
+
+# Admin panel: local config/data and user uploads (uploads live only on the server)
+app/config.local.php
+.private/
+uploads/*
+!uploads/.htaccess

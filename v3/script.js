@@ -154,12 +154,20 @@
     update();
   }
 
-  /* ---------- Contact form (front-end only until PHP handler exists) ---------- */
+  /* ---------- Contact form → /api/contact.php ---------- */
   var form = document.getElementById("contactForm");
   var success = document.getElementById("contactSuccess");
   var resetBtn = document.getElementById("contactReset");
 
   if (form) {
+    var submitBtn = form.querySelector('[type="submit"]');
+    var errorBox = document.createElement("p");
+    errorBox.setAttribute("role", "alert");
+    errorBox.hidden = true;
+    errorBox.style.cssText = "margin:12px 0 0;color:#D93036;font-weight:600;font-size:.92rem";
+    errorBox.textContent = "Göndərmək alınmadı. Bir az sonra yenidən cəhd edin və ya WhatsApp ilə yazın: +994 55 855 61 52.";
+    form.appendChild(errorBox);
+
     var rules = {
       name: function (v) { return v.trim().length >= 2; },
       phone: function (v) { return v.replace(/\D/g, "").length >= 7; }
@@ -195,10 +203,21 @@
         firstInvalid.focus();
         return;
       }
-      // TODO (PHP): POST the form to the server handler instead of this demo state.
-      form.hidden = true;
-      success.hidden = false;
-      success.focus();
+      submitBtn.disabled = true;
+      errorBox.hidden = true;
+      fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok || !data.ok) throw new Error(data.error || res.status);
+          });
+        })
+        .then(function () {
+          form.hidden = true;
+          success.hidden = false;
+          success.focus();
+        })
+        .catch(function () { errorBox.hidden = false; })
+        .then(function () { submitBtn.disabled = false; });
     });
 
     resetBtn.addEventListener("click", function () {

@@ -165,13 +165,19 @@
     });
   }
 
-  /* ---------- Contact form (front-end only; PHP handler comes later) ---------- */
+  /* ---------- Contact form → /api/contact.php ---------- */
   var form = document.querySelector('[data-form]');
   var success = document.querySelector('[data-form-success]');
   if (form && success) {
     var submitBtn = form.querySelector('[type="submit"]');
     var submitLabel = submitBtn.querySelector('.btn__label');
     var defaultLabel = submitLabel.textContent;
+    var errorBox = document.createElement('p');
+    errorBox.setAttribute('role', 'alert');
+    errorBox.hidden = true;
+    errorBox.style.cssText = 'margin:14px 0 0;color:#D93036;font-weight:600;font-size:.92rem';
+    errorBox.textContent = 'Göndərmək alınmadı. Bir az sonra yenidən cəhd edin və ya WhatsApp ilə yazın: +994 55 855 61 52.';
+    form.appendChild(errorBox);
 
     var rules = {
       name: function (v) {
@@ -217,16 +223,25 @@
         return;
       }
 
-      // TODO(PHP): send FormData(form) to the server-side handler instead of this demo delay.
       submitBtn.disabled = true;
       submitLabel.textContent = 'Göndərilir…';
-      setTimeout(function () {
-        form.hidden = true;
-        success.hidden = false;
-        success.focus();
-        submitBtn.disabled = false;
-        submitLabel.textContent = defaultLabel;
-      }, 700);
+      errorBox.hidden = true;
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok || !data.ok) throw new Error(data.error || res.status);
+          });
+        })
+        .then(function () {
+          form.hidden = true;
+          success.hidden = false;
+          success.focus();
+        })
+        .catch(function () { errorBox.hidden = false; })
+        .then(function () {
+          submitBtn.disabled = false;
+          submitLabel.textContent = defaultLabel;
+        });
     });
 
     success.querySelector('[data-form-reset]').addEventListener('click', function () {

@@ -456,7 +456,9 @@
         </div>
 
         <div class="form-card">
-          <form class="cform" id="contactForm" method="post" action="#" novalidate>
+          <form class="cform" id="contactForm" method="post" action="/api/contact.php" novalidate>
+            <input type="hidden" name="source" value="v3">
+            <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
             <h3 class="cform__title">Müraciət forması</h3>
             <div class="cform__grid">
               <div class="field">

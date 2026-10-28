@@ -16,12 +16,13 @@
 
 declare(strict_types=1);
 
-// /home/<user>/ccs-private — one level above public_html. Override with CCS_PRIVATE_DIR.
-define('PRIVATE_DIR', rtrim(getenv('CCS_PRIVATE_DIR') ?: dirname(__DIR__, 2) . '/ccs-private', '/\\'));
+// PRIVATE_DIR (/home/<user>/ccs-private, outside public_html) is shared with the admin panel.
+define('CCS', true);
+require dirname(__DIR__) . '/app/config.php';
 define('MEDIA_DIR', dirname(__DIR__) . '/media/instagram');
 const MEDIA_URL = '/media/instagram/';
 
-const TOKEN_TXT = PRIVATE_DIR . '/instagram-token.txt';   // written by hand on first setup
+const TOKEN_TXT = PRIVATE_DIR . '/instagram-token.txt';   // written by Admin → Instagram (or by hand)
 const STATE_FILE = PRIVATE_DIR . '/instagram-state.json'; // token + last refresh, managed here
 const CACHE_FILE = PRIVATE_DIR . '/instagram-cache.json';
 const LOCK_FILE = PRIVATE_DIR . '/instagram.lock';

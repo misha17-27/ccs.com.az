@@ -171,10 +171,17 @@
     });
   }
 
-  /* ---------- Contact form (demo submit — replace with PHP handler) ---------- */
+  /* ---------- Contact form → /api/contact.php ---------- */
   const form = document.querySelector('[data-form]');
   if (form) {
     const success = form.querySelector('.form__success');
+    const submitBtn = form.querySelector('[type="submit"]');
+    const errorBox = document.createElement('p');
+    errorBox.setAttribute('role', 'alert');
+    errorBox.hidden = true;
+    errorBox.style.cssText = 'margin:12px 0 0;color:#FF8A8A;font-weight:600;font-size:.92rem';
+    errorBox.textContent = 'Göndərmək alınmadı. Bir az sonra yenidən cəhd edin və ya WhatsApp ilə yazın: +994 55 855 61 52.';
+    form.appendChild(errorBox);
     const fields = {
       name: (v) => v.trim().length >= 2,
       phone: (v) => v.replace(/\D/g, '').length >= 9,
@@ -204,9 +211,17 @@
         if (firstInvalid) firstInvalid.focus();
         return;
       }
-      form.classList.add('is-sent');
-      success.hidden = false;
-      form.reset();
+      submitBtn.disabled = true;
+      errorBox.hidden = true;
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        .then((res) => res.json().catch(() => ({})).then((data) => { if (!res.ok || !data.ok) throw new Error(data.error || res.status); }))
+        .then(() => {
+          form.classList.add('is-sent');
+          success.hidden = false;
+          form.reset();
+        })
+        .catch(() => { errorBox.hidden = false; })
+        .finally(() => { submitBtn.disabled = false; });
     });
 
     form.querySelector('[data-form-reset]').addEventListener('click', () => {

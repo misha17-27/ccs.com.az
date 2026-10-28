@@ -316,7 +316,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
   font-weight: 800;
   text-transform: uppercase;
   font-size: clamp(2rem, 11vw, 8.4rem);
-  line-height: 1.08;
+  line-height: 1.12;
   letter-spacing: -.04em;
   margin: .3em 0 0;
 }
@@ -1037,7 +1037,7 @@ section[id], main [id] { scroll-margin-top: calc(var(--header-h) + 8px); }
 }
 .contact__title {
   margin: 0;
-  font: 900 clamp(2.4rem, 5.6vw, 6rem)/.88 var(--f-display);
+  font: 900 clamp(2.4rem, 5.6vw, 6rem)/1.1 var(--f-display);
   letter-spacing: -.05em;
 }
 .contact__lead { margin: 24px 0 0; font-size: 1.1rem; max-width: 28em; opacity: .9; }

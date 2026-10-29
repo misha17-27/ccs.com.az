@@ -1,5 +1,5 @@
 /* =========================================================
-   Cost Control Services — Version 1 (dark premium)
+   Cost Control Services — site styles (design V1, dark premium)
    ========================================================= */
 
 :root {
@@ -18,6 +18,7 @@
   --blue: #2F6BFF;
   --blue-2: #6E95FF;
   --wa: #25D366;
+  --warn: #FF6A3D;
 
   --font-head: "Montserrat", system-ui, sans-serif;
   --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -314,6 +315,7 @@ ul, ol { padding: 0; list-style: none; }
   color: var(--muted-2);
   transition: color .2s, background-color .2s;
 }
+a.lang__btn { display: inline-block; line-height: 1.4; }
 .lang__btn:hover { color: #fff; }
 .lang__btn.is-active { background: #fff; color: var(--navy-ink); }
 
@@ -584,8 +586,8 @@ ul, ol { padding: 0; list-style: none; }
 .svc {
   display: grid;
   grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
-  /* 6 tab rows + a flexible row that absorbs the panel's extra height */
-  grid-template-rows: repeat(6, auto) 1fr;
+  /* one row per service tab (--svc-rows) + a flexible row that absorbs the panel's extra height */
+  grid-template-rows: repeat(var(--svc-rows, 6), auto) 1fr;
   column-gap: clamp(24px, 3vw, 44px);
   row-gap: 8px;
   align-items: start;
@@ -1046,30 +1048,244 @@ ul, ol { padding: 0; list-style: none; }
 .wa-float:hover .wa-float__label,
 .wa-float:focus-visible .wa-float__label { max-width: 180px; }
 
-/* ---------- Version switch (dev only) ---------- */
-.version-switch {
-  position: fixed;
-  left: 16px;
-  bottom: 16px;
-  z-index: 90;
-  display: flex;
-  gap: 2px;
-  padding: 4px;
-  border-radius: 999px;
-  background: rgba(13, 10, 31, .7);
-  border: 1px solid var(--line-2);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  opacity: .75;
-  transition: opacity .2s;
+
+/* ---------- Inner page head ---------- */
+.page-head {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: calc(var(--header-h) + clamp(48px, 8vw, 96px)) 0 clamp(48px, 7vw, 88px);
+  border-bottom: 1px solid var(--line);
 }
-.version-switch:hover { opacity: 1; }
-.version-switch a { padding: 5px 9px; border-radius: 999px; color: var(--muted); }
-.version-switch a:hover { color: #fff; }
-.version-switch a[aria-current="page"] { background: #fff; color: var(--navy-ink); }
+.page-head__glow {
+  position: absolute;
+  z-index: -1;
+  left: -22vw;
+  bottom: -52vw;
+  width: 80vw;
+  height: 80vw;
+  max-width: 1100px;
+  max-height: 1100px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(38, 86, 214, .5), rgba(18, 49, 113, .25) 50%, rgba(13, 10, 31, 0) 100%);
+  pointer-events: none;
+}
+.crumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; font-size: .84rem; font-weight: 500; color: var(--muted-2); }
+.crumbs a { color: var(--muted); transition: color .2s; }
+.crumbs a:hover { color: #fff; }
+.crumbs [aria-current] { color: var(--blue-2); }
+.page-head__title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  line-height: 1.1;
+  letter-spacing: -.025em;
+}
+.page-head__lead { margin-top: 22px; max-width: 660px; font-size: clamp(1rem, 1.3vw, 1.12rem); color: var(--muted); }
+.page-head--404 { min-height: 72vh; display: flex; align-items: center; }
+.page-head--404 .btn { margin-top: 34px; }
+.page-head__code {
+  margin-bottom: 8px;
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: clamp(5rem, 16vw, 10rem);
+  line-height: 1;
+  letter-spacing: -.04em;
+  background: linear-gradient(100deg, #FFFFFF 0%, #A9C0FF 45%, #5B8CFF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Food cost calculator ---------- */
+.calc { overflow: hidden; border-top: 1px solid var(--line); }
+.calc__glow {
+  position: absolute;
+  left: -24vw;
+  top: 10%;
+  width: 64vw;
+  height: 64vw;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(38, 86, 214, .32), rgba(18, 49, 113, .14) 50%, transparent);
+  pointer-events: none;
+}
+.calc__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+.calc__note {
+  margin: 24px 0 34px;
+  max-width: 520px;
+  padding-left: 16px;
+  border-left: 2px solid var(--blue);
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--muted-2);
+}
+.calc__card {
+  padding: clamp(22px, 3.2vw, 40px);
+  border-radius: var(--radius);
+  background: linear-gradient(170deg, rgba(29, 26, 66, .95), rgba(22, 19, 52, .95));
+  border: 1px solid var(--line-2);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .8);
+}
+.calc__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.cfield { min-width: 0; }
+.cfield--wide { grid-column: 1 / -1; }
+.cfield label { display: block; margin-bottom: 8px; font-size: .84rem; font-weight: 600; color: #DCDAF0; }
+.cfield__input { position: relative; }
+.cfield__input input {
+  width: 100%;
+  min-height: 58px;
+  padding: 12px 44px 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-2);
+  background: rgba(255, 255, 255, .04);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
+}
+.cfield__input input:hover { border-color: rgba(255, 255, 255, .3); }
+.cfield__input input:focus { outline: none; border-color: var(--blue); background: rgba(47, 107, 255, .07); box-shadow: 0 0 0 4px rgba(47, 107, 255, .2); }
+.cfield__input.is-invalid input { border-color: #FF6B8A; box-shadow: 0 0 0 4px rgba(255, 107, 138, .15); }
+.cfield__unit {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  color: var(--muted-2);
+  pointer-events: none;
+}
+.cfield__range { display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 16px; align-items: center; }
+.cfield__range input[type="range"] { width: 100%; height: 28px; margin: 0; accent-color: var(--blue); background: transparent; cursor: pointer; }
+
+.calc__result { margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--line-2); }
+.calc__fc { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 16px; }
+.calc__label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .76rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.calc__fc-val {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(2.8rem, 6vw, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  padding: .6em 1.05em;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .88rem;
+  white-space: nowrap;
+}
+.pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.pill--ok { background: var(--blue); color: #fff; }
+.pill--warn { background: var(--warn); color: #1B0A04; }
+.pill--idle { background: rgba(255, 255, 255, .08); color: var(--muted); }
+
+.meter { position: relative; height: 12px; margin: 34px 0 6px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
+.meter__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  border-radius: inherit;
+  background: var(--blue);
+  transition: width .45s var(--ease), background-color .3s;
+}
+.meter__fill.is-warn { background: var(--warn); }
+.meter__target {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: #fff;
+  transition: left .3s var(--ease);
+}
+.meter__target span {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.calc__stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+.cstat { padding: 14px 16px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, .05); }
+.cstat dt { margin-bottom: 6px; font-size: .8rem; color: var(--muted); }
+.cstat dd {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.cstat--accent { background: rgba(47, 107, 255, .2); box-shadow: inset 0 0 0 1px rgba(47, 107, 255, .6); }
+.calc__hint { margin-top: 18px; min-height: 1.6em; font-size: .94rem; color: #DCDAF0; }
+.calc__hint b { color: #fff; }
+
+/* ---------- FAQ ---------- */
+.faq { border-top: 1px solid var(--line); }
+.faq__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+.faq__aside { position: sticky; top: calc(var(--header-h) + 24px); }
+.faq__list { display: grid; gap: 12px; }
+.faq__item {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  transition: border-color .3s, background-color .3s;
+}
+.faq__item[open] { border-color: var(--line-2); background: var(--surface-2); }
+.faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  list-style: none;
+  cursor: pointer;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary .icon { width: 20px; height: 20px; color: var(--blue-2); transition: transform .3s var(--ease); }
+.faq__item[open] summary .icon { transform: rotate(180deg); }
+.faq__item summary:hover { color: var(--blue-2); }
+.faq__answer { padding: 0 24px 24px; color: var(--muted); }
+
+/* Contact form: bots fill this field, people never see it */
+.form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------- Reveal ---------- */
 .js [data-reveal] {
@@ -1164,6 +1380,9 @@ ul, ol { padding: 0; list-style: none; }
 
   .experience__grid { grid-template-columns: 1fr; }
   .contact__grid { grid-template-columns: 1fr; }
+  .calc__grid { grid-template-columns: 1fr; }
+  .faq__grid { grid-template-columns: 1fr; }
+  .faq__aside { position: static; }
 }
 
 @media (max-width: 760px) {
@@ -1177,6 +1396,13 @@ ul, ol { padding: 0; list-style: none; }
   .form__fields { grid-template-columns: 1fr; }
   .exp-item { grid-template-columns: 1fr; gap: 12px; }
   .exp-item__tag { justify-self: start; }
+  .calc__fields { grid-template-columns: minmax(0, 1fr); }
+  .cfield__range { grid-template-columns: minmax(0, 1fr) 100px; }
+  .calc__stats { grid-template-columns: minmax(0, 1fr); }
+  .cstat { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .cstat dt { margin: 0; }
+  .faq__item summary { padding: 18px; font-size: 1rem; }
+  .faq__answer { padding: 0 18px 20px; }
 }
 
 @media (max-width: 520px) {

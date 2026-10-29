@@ -8,8 +8,24 @@
   if (!grids.length) return;
 
   var SOURCES = ['/api/instagram.php', '/assets/data/instagram.json'];
-  var MONTHS = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avqust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr'];
-  var KIND = { VIDEO: 'Video', CAROUSEL_ALBUM: 'Albom', IMAGE: 'Foto' };
+  // Words for image alt texts in the page language (<html lang>)
+  var WORDS = {
+    az: {
+      months: ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avqust', 'sentyabr', 'oktyabr', 'noyabr', 'dekabr'],
+      kind: { VIDEO: 'Video', CAROUSEL_ALBUM: 'Albom', IMAGE: 'Foto' }
+    },
+    ru: {
+      months: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
+      kind: { VIDEO: 'Видео', CAROUSEL_ALBUM: 'Альбом', IMAGE: 'Фото' }
+    },
+    en: {
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      kind: { VIDEO: 'Video', CAROUSEL_ALBUM: 'Album', IMAGE: 'Photo' }
+    }
+  };
+  var lang = WORDS[document.documentElement.lang] || WORDS.az;
+  var MONTHS = lang.months;
+  var KIND = lang.kind;
   var SVG = 'http://www.w3.org/2000/svg';
   // Static, trusted markup only.
   var ICONS = {

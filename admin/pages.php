@@ -221,7 +221,7 @@ if ($key !== '') {
         flash('error', t('not_found'));
         redirect($self);
     }
-    $preview = PAGE_PREVIEW[$key] ?? '/' . $page['slug'];
+    $preview = '/' . $page['slug'];
     admin_header(tl(PAGES[$key]), 'pages', $user,
         '<a class="btn btn--ghost" href="' . $self . '">' . icon('back') . '<span>' . e(t('back')) . '</span></a>'
         . '<a class="btn btn--ghost" href="' . e($preview) . '" target="_blank" rel="noopener">' . icon('external') . '<span>' . e(t('open')) . '</span></a>');
@@ -302,7 +302,6 @@ admin_header(t('nav.pages'), 'pages', $user);
 <section class="card card--flush">
   <div class="card__intro">
     <p><?= e(t('pages.intro')) ?></p>
-    <p class="muted small"><?= e(t('pages.preview_note')) ?></p>
   </div>
   <div class="table-wrap">
     <table class="table table--pages">
@@ -319,7 +318,7 @@ admin_header(t('nav.pages'), 'pages', $user);
             <td><?= status_dot(seo_counts($row)) ?></td>
             <td class="actions">
               <a class="btn btn--ghost btn--sm btn--collapse" href="<?= $self ?>?key=<?= e($key) ?>" title="<?= e(t('edit')) ?>"><?= icon('edit') ?><span><?= e(t('edit')) ?></span></a>
-              <a class="btn btn--ghost btn--sm btn--collapse" href="<?= e(PAGE_PREVIEW[$key] ?? '/' . $row['slug']) ?>" target="_blank" rel="noopener" title="<?= e(t('open')) ?>"><?= icon('external') ?><span><?= e(t('open')) ?></span></a>
+              <a class="btn btn--ghost btn--sm btn--collapse" href="/<?= e($row['slug']) ?>" target="_blank" rel="noopener" title="<?= e(t('open')) ?>"><?= icon('external') ?><span><?= e(t('open')) ?></span></a>
             </td>
           </tr>
         <?php endforeach; ?>

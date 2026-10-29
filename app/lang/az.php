@@ -154,10 +154,10 @@ return [
     'faq.question_required' => 'Sualı (AZ) daxil edin.',
 
     'texts.show_lang' => 'Bütün sahələrdə dili dəyiş',
+    'texts.format_hint' => 'Formatlama: *söz* — rəngli vurğu (başlıqlarda), **söz** — qalın şrift; çoxsətirli sahələrdə Enter yeni sətir yaradır. Tərcümə boş qalsa, saytda AZ mətn göstərilir.',
     'seo.hint' => 'Axtarış sistemlərində və sosial şəbəkələrdə görünən başlıq və təsvir. Başlıq ~60, təsvir ~160 simvol olsun.',
 
     'pages.intro' => 'Səhifələrin məzmunu «Mətnlər», «Xidmətlər» və «Suallar» bölmələrində redaktə olunur. Burada — ünvanlar və SEO.',
-    'pages.preview_note' => 'Sayt PHP-yə keçənə qədər «Aç» düyməsi səhifənin hazırkı prototipdəki bölməsini açır.',
     'pages.col_page' => 'Səhifə',
     'pages.col_address' => 'Ünvan',
     'pages.col_text' => 'Mətn',

@@ -4,6 +4,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const desktop = window.matchMedia('(min-width: 960px)');
   const hasIO = 'IntersectionObserver' in window;
+  const locale = { az: 'az-AZ', ru: 'ru-RU', en: 'en-US' }[document.documentElement.lang] || 'az-AZ';
 
   /* ---------- Header: scrolled state ---------- */
   const header = document.querySelector('[data-header]');
@@ -17,7 +18,7 @@
 
   const setMenu = (open) => {
     burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Menyunu bağla' : 'Menyunu aç');
+    burger.setAttribute('aria-label', open ? burger.dataset.labelClose : burger.dataset.labelOpen);
     document.body.classList.toggle('menu-open', open);
   };
 
@@ -30,30 +31,6 @@
     }
   });
   desktop.addEventListener('change', (e) => { if (e.matches) setMenu(false); });
-
-  /* ---------- Language switch (visual only for now) ---------- */
-  document.querySelectorAll('.lang__btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      // TODO: wire to RU / EN versions when they exist
-    });
-  });
-
-  /* ---------- Active nav link on scroll ---------- */
-  const navLinks = [...document.querySelectorAll('.nav__link')];
-  if (hasIO) {
-    const sectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const id = '#' + entry.target.id;
-        navLinks.forEach((link) => link.classList.toggle('is-active', link.getAttribute('href') === id));
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-
-    navLinks
-      .map((link) => document.querySelector(link.getAttribute('href')))
-      .filter(Boolean)
-      .forEach((section) => sectionObserver.observe(section));
-  }
 
   /* ---------- Scroll reveal ---------- */
   const revealEls = document.querySelectorAll('[data-reveal]');
@@ -149,13 +126,21 @@
     desktop.addEventListener('change', (e) => {
       if (e.matches && !tabs.some((t) => t.getAttribute('aria-expanded') === 'true')) activate(tabs[0]);
     });
+
+    // footer links (/xidmetler#svc-tab-3) open that service
+    const fromHash = () => {
+      const tab = tabs.find((t) => '#' + t.id === window.location.hash);
+      if (tab) activate(tab);
+    };
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
   }
 
   /* ---------- "Apply for this service" links preselect the form ---------- */
   const serviceSelect = document.getElementById('f-service');
   document.querySelectorAll('[data-service]').forEach((link) => {
     link.addEventListener('click', () => {
-      if (serviceSelect) serviceSelect.value = link.dataset.service;
+      if (serviceSelect && link.dataset.service) serviceSelect.value = link.dataset.service;
     });
   });
 
@@ -166,9 +151,105 @@
         const clone = track.cloneNode(true);
         clone.setAttribute('aria-hidden', 'true');
         clone.querySelectorAll('img').forEach((img) => { img.alt = ''; img.removeAttribute('title'); });
+        clone.querySelectorAll('a').forEach((a) => { a.tabIndex = -1; });
         track.parentElement.appendChild(clone);
       }
     });
+  }
+
+  /* ---------- Food cost calculator ---------- */
+  const calc = document.querySelector('[data-calc]');
+  if (calc) {
+    const t = JSON.parse(calc.dataset.i18n);
+    const inCost = calc.elements.cost;
+    const inPrice = calc.elements.price;
+    const inTarget = calc.elements.target;
+    const inRange = calc.querySelector('[data-calc-range]');
+    const out = {};
+    calc.querySelectorAll('[data-out]').forEach((el) => { out[el.dataset.out] = el; });
+
+    const nf2 = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const nf1 = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const money = (n) => nf2.format(n) + ' ₼';
+    const pct = (n) => nf1.format(n) + '%';
+    const parse = (el) => {
+      const v = parseFloat(String(el.value).replace(/\s/g, '').replace(',', '.'));
+      return Number.isFinite(v) ? v : NaN;
+    };
+    const setInvalid = (el, bad) => {
+      el.parentElement.classList.toggle('is-invalid', bad);
+      el.setAttribute('aria-invalid', String(bad));
+    };
+    // Hint texts contain {rec} / {max}; the amounts are shown in bold
+    const fill = (text, vars) => {
+      const p = document.createElement('p');
+      text.split(/(\{\w+\})/).forEach((part) => {
+        const key = part.slice(1, -1);
+        if (/^\{\w+\}$/.test(part) && key in vars) {
+          const b = document.createElement('b');
+          b.textContent = vars[key];
+          p.appendChild(b);
+        } else {
+          p.appendChild(document.createTextNode(part));
+        }
+      });
+      return [...p.childNodes];
+    };
+
+    const update = () => {
+      const cost = parse(inCost);
+      const price = parse(inPrice);
+      const target = parse(inTarget);
+
+      const costBad = !(cost >= 0);
+      const priceBad = !(price > 0);
+      const targetBad = !(target > 0 && target < 100);
+      setInvalid(inCost, costBad);
+      setInvalid(inPrice, priceBad);
+      setInvalid(inTarget, targetBad);
+
+      if (!targetBad) {
+        out.target.style.left = Math.min(target, 100) + '%';
+        if (target >= +inRange.min && target <= +inRange.max) inRange.value = String(Math.round(target));
+      }
+
+      if (costBad || priceBad || targetBad) {
+        out.fc.textContent = '—';
+        out.margin.textContent = out.marginPct.textContent = out.rec.textContent = '—';
+        out.status.className = 'pill pill--idle';
+        out.status.textContent = t.idle;
+        out.meter.style.width = '0';
+        out.hint.textContent = t.hintInvalid;
+        return;
+      }
+
+      const fc = cost / price * 100;
+      const margin = price - cost;
+      const recPrice = cost / (target / 100);
+      const maxCost = price * target / 100;
+      const ok = fc <= target;
+
+      out.fc.textContent = pct(fc);
+      out.margin.textContent = money(margin);
+      out.marginPct.textContent = pct(margin / price * 100);
+      out.rec.textContent = money(recPrice);
+
+      out.status.className = 'pill ' + (ok ? 'pill--ok' : 'pill--warn');
+      out.status.textContent = ok ? t.ok : t.warn;
+
+      out.meter.style.width = Math.min(fc, 100) + '%';
+      out.meter.classList.toggle('is-warn', !ok);
+
+      out.hint.replaceChildren(...fill(ok ? t.hintOk : t.hintWarn, { rec: money(recPrice), max: money(maxCost) }));
+    };
+
+    inRange.addEventListener('input', () => {
+      inTarget.value = inRange.value;
+      update();
+    });
+    [inCost, inPrice, inTarget].forEach((el) => el.addEventListener('input', update));
+    calc.addEventListener('submit', (e) => e.preventDefault());
+    update();
   }
 
   /* ---------- Contact form → /api/contact.php ---------- */
@@ -180,7 +261,7 @@
     errorBox.setAttribute('role', 'alert');
     errorBox.hidden = true;
     errorBox.style.cssText = 'margin:12px 0 0;color:#FF8A8A;font-weight:600;font-size:.92rem';
-    errorBox.textContent = 'Göndərmək alınmadı. Bir az sonra yenidən cəhd edin və ya WhatsApp ilə yazın: +994 55 855 61 52.';
+    errorBox.textContent = form.dataset.error;
     form.appendChild(errorBox);
     const fields = {
       name: (v) => v.trim().length >= 2,

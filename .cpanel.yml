@@ -2,16 +2,16 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/ccscom/public_html/
-    - /bin/cp index.html $DEPLOYPATH
+    # Public site: router (index.php), styles/scripts/images, API endpoints (contact form, Instagram feed)
+    - /bin/cp index.php robots.txt $DEPLOYPATH
     - /bin/cp -R assets $DEPLOYPATH
-    - /bin/cp -R v1 $DEPLOYPATH
-    - /bin/cp -R v2 $DEPLOYPATH
-    - /bin/cp -R v3 $DEPLOYPATH
     - /bin/cp -R api $DEPLOYPATH
-    # Admin panel: pages, PHP core (app/.htaccess denies web access) and the uploads folder rules.
+    # Admin panel and the PHP core with the site templates (app/.htaccess denies web access), plus the uploads folder rules.
     # Uploaded files and the database stay on the server: uploads/* is git-ignored, the DB lives in ~/ccs-private.
     - /bin/cp -R admin $DEPLOYPATH
     - /bin/cp -R app $DEPLOYPATH
     - /bin/cp -R uploads $DEPLOYPATH
-    # Cache busting: every deploy gets a fresh ?v= on CSS/JS links (Cloudflare caches them for hours)
-    - /bin/sed -i "s/?v=dev/?v=$(/bin/date +%Y%m%d%H%M%S)/g" ${DEPLOYPATH}v1/index.html ${DEPLOYPATH}v2/index.html ${DEPLOYPATH}v3/index.html
+    # Design prototypes and their version picker are gone; /v1/ and the like now redirect to the home page.
+    - /bin/rm -rf ${DEPLOYPATH}v1 ${DEPLOYPATH}v2 ${DEPLOYPATH}v3 ${DEPLOYPATH}index.html
+    # Rewrite rules for page addresses, merged into .htaccess without touching cPanel's own lines.
+    - /bin/sh deploy/merge-htaccess.sh $DEPLOYPATH

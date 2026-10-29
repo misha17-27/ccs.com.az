@@ -55,6 +55,7 @@ admin_header(t('nav.texts'), $group === 'about' ? 'about' : 'texts', $user);
       <?php endforeach; ?>
     </div>
   </div>
+  <p class="muted small"><?= e(t('texts.format_hint')) ?></p>
   <?php foreach ($fields as $key => [$g, $labelAz, $labelRu, $type]): ?>
     <?= ml_field("t[{$key}]", admin_lang() === 'ru' ? $labelRu : $labelAz, row_ml($rows[$key] ?? [], 'value'), $type, true) ?>
   <?php endforeach; ?>

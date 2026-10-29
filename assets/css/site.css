@@ -689,11 +689,13 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
 .svc__points p { margin-top: 6px; color: var(--muted); font-size: .94rem; line-height: 1.6; }
 .svc__body .link-arrow { margin-top: auto; padding-top: 24px; align-self: flex-start; border-bottom: 0; }
 
+/* a fixed frame at the top of the panel, so the renders are not blown up to the height of the text */
 .svc__media {
   position: relative;
+  align-self: start;
+  aspect-ratio: 3 / 4;
   border-radius: var(--radius-md);
   overflow: hidden;
-  min-height: 380px;
   border: 1px solid var(--line);
 }
 .svc__media--dark { background: #0D0A1F; }
@@ -705,7 +707,20 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   height: 100%;
   object-fit: cover;
 }
-.svc__media--bottom img { object-position: 50% 100%; }
+.svc__media--bottom {
+  background: radial-gradient(90% 65% at 50% 82%, rgba(47, 107, 255, .3), transparent 72%), #0D0A1F;
+}
+/* a wide render cut at the bottom (the gear) rises from the bottom edge; its dark background
+   (the page colour) is blended away so the glow shows through */
+.svc__media--bottom img {
+  top: auto;
+  left: -40%;
+  width: 180%;
+  max-width: none;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: lighten;
+}
 .svc__media::after {
   content: "";
   position: absolute;
@@ -1487,6 +1502,7 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   .svc__name { font-size: .95rem; }
   .svc__num { display: none; }
   .svc__tab { grid-template-columns: auto 1fr auto; }
+  .svc__media { aspect-ratio: 4 / 3; }
   .wa-float { height: 54px; padding: 0 15px; right: 16px; bottom: 16px; }
 }
 

@@ -39,7 +39,7 @@ $services = site_services();
             <a class="link-arrow" href="#elaqe" data-service="<?= e($service['title_az']) ?>"><?= e(ui('svc_apply')) ?> <svg class="icon"><use href="#i-arrow"/></svg></a>
           </div>
           <?php if ($service['image']): ?>
-            <figure class="svc__media svc__media--<?= e($media) ?>"><img src="<?= e($service['image']) ?>" alt="<?= e($title) ?>" loading="lazy"<?= img_size_attrs($service['image']) ?><?= $imgStyle ? ' style="' . e($imgStyle) . '"' : '' ?>></figure>
+            <figure class="svc__media svc__media--<?= e($media) ?>"><img src="<?= e(site_asset($service['image'])) ?>" alt="<?= e($title) ?>" loading="lazy"<?= img_size_attrs($service['image']) ?><?= $imgStyle ? ' style="' . e($imgStyle) . '"' : '' ?>></figure>
           <?php endif; ?>
         </div>
       <?php endforeach; ?>

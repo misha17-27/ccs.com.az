@@ -11,12 +11,12 @@ const SITE_NAME = 'Cost Control Services';
 
 /** Service images that ship with the site: [panel background, extra image style] (see .svc__media in site.css). */
 const SERVICE_MEDIA = [
-    '/assets/img/render/wallet.jpg' => ['dark', 'object-position:50% 62%'],
+    '/assets/img/render/wallet.jpg' => ['dark', 'object-position:50% 85%'],
     '/assets/img/render/chart.jpg' => ['light', ''],
     '/assets/img/render/gear.jpg' => ['dark svc__media--bottom', ''],
     '/assets/img/render/document.jpg' => ['light', ''],
     '/assets/img/render/box.jpg' => ['dark', ''],
-    '/assets/img/render/lock.jpg' => ['light', ''],
+    '/assets/img/render/lock.jpg' => ['light', 'object-position:50% 60%'],
 ];
 
 function site_lang(?string $set = null): string

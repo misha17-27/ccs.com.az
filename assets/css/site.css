@@ -71,6 +71,15 @@ ul, ol { padding: 0; list-style: none; }
 }
 
 .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 .icon {
   width: 20px;
@@ -788,9 +797,10 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   white-space: nowrap;
 }
 
+/* Bento: a 4:3 photo over two columns sets the row height, the tall photo beside it fills that row */
 .experience__gallery {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 .gallery__item {
@@ -798,10 +808,11 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   overflow: hidden;
   border-radius: var(--radius-md);
   background: var(--surface);
-  height: 240px;
 }
-.gallery__item--wide { grid-column: 1 / -1; height: auto; aspect-ratio: 16 / 9; }
+.gallery__item--big { grid-column: span 2; aspect-ratio: 4 / 3; }
 .gallery__item img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -822,6 +833,68 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   backdrop-filter: blur(8px);
   font-size: .8rem;
   font-weight: 500;
+}
+
+/* ---------- TikTok ---------- */
+.tt__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 40px;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+.tt__head .section-head { margin-bottom: 0; }
+.tt__grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  border-radius: var(--radius-md);
+}
+.tt__cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, var(--surface-2), var(--surface));
+}
+.tt__cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s var(--ease);
+}
+.tt__grid:hover .tt__cover img { transform: scale(1.04); }
+.tt__badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(13, 10, 31, .6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+.tt__badge .icon { width: 16px; height: 16px; }
+
+@media (max-width: 1024px) {
+  .tt__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tt__cover:nth-child(n+5) { display: none; }
+}
+@media (max-width: 760px) {
+  .tt__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .tt__cover { border-radius: var(--radius-sm); }
+  .tt__cover:nth-child(n+4) { display: none; }
+  .tt__badge { top: 6px; right: 6px; width: 26px; height: 26px; }
+  .tt__badge .icon { width: 13px; height: 13px; }
 }
 
 /* ---------- Instagram feed (grid styles: assets/css/instagram-feed.css) ---------- */
@@ -967,6 +1040,7 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
 .form__success[hidden] { display: none; }
 .form__success h3 { font-family: var(--font-head); font-size: 1.6rem; font-weight: 600; }
 .form__success p { color: var(--muted); max-width: 340px; margin-bottom: 12px; }
+.form__success .form__wa-hint { margin-top: -12px; font-size: .86rem; color: var(--muted-2); }
 .form__success-ic {
   display: grid;
   place-items: center;
@@ -1392,7 +1466,8 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   .facts__item { padding: 22px 16px 24px; }
   .facts__item:nth-child(odd) { border-left: 0; padding-left: 0; }
   .facts__item:nth-child(n+3) { border-top: 1px solid var(--line); }
-  .gallery__item { height: 180px; }
+  .experience__gallery { gap: 10px; }
+  .gallery__item figcaption { left: 8px; bottom: 8px; max-width: calc(100% - 16px); padding: 6px 10px; border-radius: 10px; font-size: .7rem; line-height: 1.3; }
   .form__fields { grid-template-columns: 1fr; }
   .exp-item { grid-template-columns: 1fr; gap: 12px; }
   .exp-item__tag { justify-self: start; }

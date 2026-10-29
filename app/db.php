@@ -8,7 +8,7 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 
 function db(): PDO
 {
@@ -47,6 +47,9 @@ function migrate(PDO $pdo): void
         }
         if ($version < 3) {
             refresh_seed_content($pdo);
+        }
+        if ($version < 4) {
+            seed_new_texts($pdo);
         }
         $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
         $pdo->commit();
@@ -326,4 +329,13 @@ function refresh_seed_content(PDO $pdo): void
     }
 
     $pdo->exec("UPDATE partners SET name = 'Cəviz Tea & Lounge' WHERE name = 'Caviz Tea & Lounge'");
+}
+
+/** v4: texts of blocks added later (the TikTok block) get their default values; existing texts are kept. */
+function seed_new_texts(PDO $pdo): void
+{
+    $text = $pdo->prepare('INSERT OR IGNORE INTO texts (key, value_az, value_ru, value_en, updated_at) VALUES (?, ?, ?, ?, ?)');
+    foreach (TEXT_FIELDS as $key => $def) {
+        $text->execute([$key, ...ml_values($def[4]), now()]);
+    }
 }

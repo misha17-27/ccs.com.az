@@ -14,6 +14,13 @@ return [
     'breadcrumb' => 'Путь к странице',
     'wa_greeting' => 'Здравствуйте! Меня интересуют услуги Cost Control.',
     'wa_label' => 'Написать в WhatsApp',
+    // The contact form request as a WhatsApp message
+    'wa_msg_intro' => 'Здравствуйте! Заявка с сайта:',
+    'wa_msg_name' => 'Имя',
+    'wa_msg_phone' => 'Телефон',
+    'wa_msg_company' => 'Ресторан',
+    'wa_msg_service' => 'Услуга',
+    'wa_msg_message' => 'Сообщение',
 
     'hero_card_label' => 'Основные услуги',
     'svc_apply' => 'Оставить заявку на эту услугу',
@@ -38,8 +45,9 @@ return [
 
     'exp_gallery_wide' => 'Церемония награждения на Чемпионате мира по тхэквондо, Баку 2023',
     'exp_gallery_caption' => 'Баку, 2023 · Чемпионат мира по тхэквондо',
-    'exp_gallery_match' => 'Момент поединка по тхэквондо',
-    'exp_gallery_ceremony' => 'Церемония награждения соревнований по тхэквондо',
+    'exp_gallery_arena' => 'Наша команда на арене Чемпионата мира по тхэквондо, Баку 2023',
+    'exp_gallery_stage' => 'Наша команда у сцены награждения Чемпионата мира по тхэквондо, Баку 2023',
+    'exp_gallery_banner' => 'Наша команда у официального баннера Чемпионата мира по тхэквондо, Баку 2023',
 
     'faq_ask' => 'Задать вопрос в WhatsApp',
 
@@ -60,13 +68,15 @@ return [
     'form_service_any' => 'Комплексный подход / пока не знаю',
     'form_message' => 'Сообщение',
     'form_message_ph' => 'Коротко о вашем ресторане и вопросе',
-    'form_submit' => 'Отправить заявку',
-    'form_note' => 'Ваши данные используются только для связи с вами.',
+    'form_submit' => 'Отправить в WhatsApp',
+    'form_note' => 'Откроется WhatsApp с готовым сообщением — останется только отправить его.',
+    'form_wa_hint' => 'Не забудьте отправить сообщение в WhatsApp. Если WhatsApp не открылся, нажмите кнопку ниже.',
+    'form_wa_open' => 'Открыть WhatsApp',
     'form_again' => 'Новая заявка',
-    'form_error' => 'Не удалось отправить. Попробуйте чуть позже или напишите в WhatsApp: {phone}.',
 
     'ig_profile' => 'Наш Instagram',
     'ig_follow' => 'Подписаться в Instagram',
+    'tt_follow' => 'Смотреть в TikTok',
 
     'footer_back_top' => 'Cost Control Services — наверх',
     'footer_nav_label' => 'Нижнее меню',

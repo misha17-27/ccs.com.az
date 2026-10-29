@@ -14,6 +14,13 @@ return [
     'breadcrumb' => 'Səhifə yolu',
     'wa_greeting' => 'Salam! Cost Control xidmətləri ilə maraqlanıram.',
     'wa_label' => 'WhatsApp ilə yazın',
+    // The contact form request as a WhatsApp message
+    'wa_msg_intro' => 'Salam! Saytdan sorğu:',
+    'wa_msg_name' => 'Ad',
+    'wa_msg_phone' => 'Telefon',
+    'wa_msg_company' => 'Restoran',
+    'wa_msg_service' => 'Xidmət',
+    'wa_msg_message' => 'Mesaj',
 
     'hero_card_label' => 'Əsas xidmətlər',
     'svc_apply' => 'Bu xidmət üzrə müraciət et',
@@ -38,8 +45,9 @@ return [
 
     'exp_gallery_wide' => 'Bakı 2023 Taekvondo üzrə Dünya Çempionatında mükafatlandırma mərasimi',
     'exp_gallery_caption' => 'Bakı, 2023 · Taekvondo üzrə Dünya Çempionatı',
-    'exp_gallery_match' => 'Taekvondo yarışından an',
-    'exp_gallery_ceremony' => 'Taekvondo yarışının mükafatlandırma mərasimi',
+    'exp_gallery_arena' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının arenasında',
+    'exp_gallery_stage' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının mükafatlandırma səhnəsi önündə',
+    'exp_gallery_banner' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının rəsmi bannerı önündə',
 
     'faq_ask' => 'WhatsApp-da sual verin',
 
@@ -60,13 +68,15 @@ return [
     'form_service_any' => 'Kompleks yanaşma / hələ bilmirəm',
     'form_message' => 'Mesaj',
     'form_message_ph' => 'Restoranınız və sualınız haqqında qısa məlumat',
-    'form_submit' => 'Müraciət göndər',
-    'form_note' => 'Məlumatlarınız yalnız sizinlə əlaqə saxlamaq üçün istifadə olunur.',
+    'form_submit' => 'WhatsApp ilə göndər',
+    'form_note' => 'WhatsApp hazır mesajla açılacaq — onu sadəcə göndərin.',
+    'form_wa_hint' => 'Mesajı WhatsApp-da göndərməyi unutmayın. WhatsApp açılmadısa, aşağıdakı düyməni basın.',
+    'form_wa_open' => 'WhatsApp-da aç',
     'form_again' => 'Yeni müraciət',
-    'form_error' => 'Göndərmək alınmadı. Bir az sonra yenidən cəhd edin və ya WhatsApp ilə yazın: {phone}.',
 
     'ig_profile' => 'Instagram səhifəmiz',
     'ig_follow' => 'Instagram-da izləyin',
+    'tt_follow' => 'TikTok-da izləyin',
 
     'footer_back_top' => 'Cost Control Services — yuxarı qayıt',
     'footer_nav_label' => 'Alt menyu',

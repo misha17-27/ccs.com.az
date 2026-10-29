@@ -20,6 +20,7 @@ const TEXT_GROUPS = [
     'experience' => ['az' => 'Təcrübə', 'ru' => 'Опыт'],
     'faq' => ['az' => 'Suallar bölməsi', 'ru' => 'Блок вопросов'],
     'contact' => ['az' => 'Əlaqə bölməsi', 'ru' => 'Блок контактов'],
+    'tiktok' => ['az' => 'TikTok', 'ru' => 'TikTok'],
     'instagram' => ['az' => 'Instagram', 'ru' => 'Instagram'],
     'footer' => ['az' => 'Footer', 'ru' => 'Подвал'],
 ];
@@ -224,6 +225,18 @@ const TEXT_FIELDS = [
         'en' => 'New videos and practical tips for the restaurant business — regularly on our Instagram.',
     ]],
 
+    'tiktok.eyebrow' => ['tiktok', 'Kiçik başlıq', 'Надзаголовок', 'line', ['az' => 'TikTok', 'ru' => 'TikTok', 'en' => 'TikTok']],
+    'tiktok.title' => ['tiktok', 'Başlıq', 'Заголовок', 'line', [
+        'az' => 'Real layihələr — *videoda*',
+        'ru' => 'Реальные проекты — *на видео*',
+        'en' => 'Real projects — *on video*',
+    ]],
+    'tiktok.lead' => ['tiktok', 'Mətn', 'Текст', 'area', [
+        'az' => 'Restoranlarda gördüyümüz işlər, xərclərə nəzarət üzrə məsləhətlər və yeni əməkdaşlıqlar — qısa videolarla TikTok səhifəmizdə.',
+        'ru' => 'Наша работа в ресторанах, советы по контролю затрат и новые проекты — в коротких видео в нашем TikTok.',
+        'en' => 'Our work in restaurants, cost control tips and new partnerships — in short videos on our TikTok.',
+    ]],
+
     'footer.text' => ['footer', 'Qısa təsvir', 'Краткое описание', 'area', [
         'az' => 'İaşə və restoran sektorunda peşəkar cost control xidmətləri. 2021-ci ildən bəri.',
         'ru' => 'Профессиональный cost control для ресторанов и общепита. С 2021 года.',
@@ -237,8 +250,8 @@ const TEXT_FIELDS = [
  * 'items' tables, and their translations make up the "Text" status in the admin.
  */
 const PAGES = [
-    'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'groups' => ['hero', 'facts', 'calc', 'instagram'], 'items' => [],
-        'sections' => ['hero', 'about', 'services', 'calc', 'clients', 'experience', 'contact', 'instagram']],
+    'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'groups' => ['hero', 'facts', 'calc', 'tiktok', 'instagram'], 'items' => [],
+        'sections' => ['hero', 'about', 'services', 'calc', 'clients', 'experience', 'tiktok', 'contact', 'instagram']],
     'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'groups' => ['about', 'experience'], 'items' => [],
         'sections' => ['about', 'experience', 'clients', 'contact']],
     'services' => ['az' => 'Xidmətlər (siyahı)', 'ru' => 'Услуги (список)', 'slug' => 'xidmetler', 'groups' => ['services', 'calc'], 'items' => ['services'],
@@ -248,7 +261,7 @@ const PAGES = [
     'faq' => ['az' => 'Suallar', 'ru' => 'Вопросы', 'slug' => 'suallar', 'groups' => ['faq'], 'items' => ['faqs'],
         'sections' => ['faq', 'contact']],
     'contact' => ['az' => 'Əlaqə', 'ru' => 'Контакты', 'slug' => 'elaqe', 'groups' => ['contact'], 'items' => [],
-        'sections' => ['contact', 'instagram']],
+        'sections' => ['contact', 'tiktok', 'instagram']],
 ];
 
 /** Addresses the site itself uses, so pages cannot take them. */
@@ -260,6 +273,7 @@ const SETTING_FIELDS = [
     'contact_whatsapp' => ['contacts', 'WhatsApp nömrəsi (yalnız rəqəmlər)', 'Номер WhatsApp (только цифры)', 'text', '994558556152'],
     'contact_email' => ['contacts', 'E-poçt', 'E-mail', 'email', 'info@ccs.com.az'],
     'contact_instagram' => ['contacts', 'Instagram linki', 'Ссылка на Instagram', 'url', 'https://www.instagram.com/costcontrol.services/'],
+    'contact_tiktok' => ['contacts', 'TikTok linki', 'Ссылка на TikTok', 'url', 'https://www.tiktok.com/@costcontrol.services'],
     'contact_map' => ['contacts', 'Google Maps linki', 'Ссылка на Google Maps', 'url', ''],
     'notify_email' => ['notify', 'Yeni sorğular bu ünvana göndərilsin', 'Отправлять новые заявки на адрес', 'email', ''],
     'turnstile_site_key' => ['security', 'Turnstile Site Key', 'Turnstile Site Key', 'text', ''],

@@ -145,6 +145,7 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
           <li><a href="mailto:<?= e(setting('contact_email')) ?>"><?= e(setting('contact_email')) ?></a></li>
         <?php endif; ?>
         <li><a href="<?= e(instagram_url()) ?>" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="<?= e(tiktok_url()) ?>" target="_blank" rel="noopener">TikTok</a></li>
       </ul>
     </div>
   </div>

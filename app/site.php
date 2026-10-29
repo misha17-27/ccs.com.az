@@ -201,6 +201,19 @@ function instagram_handle(): string
     return '@' . ($path !== '' ? explode('/', $path)[0] : 'costcontrol.services');
 }
 
+function tiktok_url(): string
+{
+    return setting('contact_tiktok', 'https://www.tiktok.com/@costcontrol.services');
+}
+
+/** "@costcontrol.services" from the TikTok link. */
+function tiktok_handle(): string
+{
+    $path = trim((string)parse_url(tiktok_url(), PHP_URL_PATH), '/');
+    $first = explode('/', $path)[0];
+    return preg_match('/^@[\w.]+$/', $first) ? $first : '@costcontrol.services';
+}
+
 /** Renders app/views/sections/{$section}.php with $vars as its variables. */
 function section(string $section, array $vars = []): void
 {

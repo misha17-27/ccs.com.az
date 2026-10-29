@@ -252,17 +252,12 @@
     update();
   }
 
-  /* ---------- Contact form → /api/contact.php ---------- */
+  /* ---------- Contact form: sent from the visitor's WhatsApp, also saved via /api/contact.php ---------- */
   const form = document.querySelector('[data-form]');
   if (form) {
+    const t = JSON.parse(form.dataset.i18n);
     const success = form.querySelector('.form__success');
-    const submitBtn = form.querySelector('[type="submit"]');
-    const errorBox = document.createElement('p');
-    errorBox.setAttribute('role', 'alert');
-    errorBox.hidden = true;
-    errorBox.style.cssText = 'margin:12px 0 0;color:#FF8A8A;font-weight:600;font-size:.92rem';
-    errorBox.textContent = form.dataset.error;
-    form.appendChild(errorBox);
+    const waLink = form.querySelector('[data-wa-link]');
     const fields = {
       name: (v) => v.trim().length >= 2,
       phone: (v) => v.replace(/\D/g, '').length >= 9,
@@ -284,6 +279,19 @@
       });
     });
 
+    // "Salam! Saytdan sorğu:" and a "label: value" line per filled-in field
+    const waMessage = () => {
+      const service = form.elements.service;
+      const lines = [
+        [t.name, form.elements.name.value],
+        [t.phone, form.elements.phone.value],
+        [t.company, form.elements.company.value],
+        [t.service, service.value ? service.selectedOptions[0].textContent : ''],
+        [t.message, form.elements.message.value],
+      ].filter(([, value]) => value.trim() !== '').map(([label, value]) => label + ': ' + value.trim());
+      return [t.intro, ...lines].join('\n');
+    };
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const results = Object.keys(fields).map(validateField);
@@ -292,17 +300,17 @@
         if (firstInvalid) firstInvalid.focus();
         return;
       }
-      submitBtn.disabled = true;
-      errorBox.hidden = true;
-      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
-        .then((res) => res.json().catch(() => ({})).then((data) => { if (!res.ok || !data.ok) throw new Error(data.error || res.status); }))
-        .then(() => {
-          form.classList.add('is-sent');
-          success.hidden = false;
-          form.reset();
-        })
-        .catch(() => { errorBox.hidden = false; })
-        .finally(() => { submitBtn.disabled = false; });
+      const url = form.dataset.wa + '?text=' + encodeURIComponent(waMessage());
+      // Opened within the submit event, so popup blockers allow it; phones hand wa.me to the app
+      window.open(url, '_blank', 'noopener');
+      // The copy for Admin → Requests; the WhatsApp message is the main channel, so a failure stays silent
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' }, keepalive: true })
+        .catch(() => {});
+      // Fallback if the new window was blocked or closed
+      waLink.href = url;
+      form.classList.add('is-sent');
+      success.hidden = false;
+      form.reset();
     });
 
     form.querySelector('[data-form-reset]').addEventListener('click', () => {

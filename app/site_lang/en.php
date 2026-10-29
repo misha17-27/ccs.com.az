@@ -14,6 +14,13 @@ return [
     'breadcrumb' => 'Breadcrumb',
     'wa_greeting' => 'Hello! I am interested in Cost Control services.',
     'wa_label' => 'Message us on WhatsApp',
+    // The contact form request as a WhatsApp message
+    'wa_msg_intro' => 'Hello! A request from the website:',
+    'wa_msg_name' => 'Name',
+    'wa_msg_phone' => 'Phone',
+    'wa_msg_company' => 'Restaurant',
+    'wa_msg_service' => 'Service',
+    'wa_msg_message' => 'Message',
 
     'hero_card_label' => 'Key services',
     'svc_apply' => 'Request this service',
@@ -38,8 +45,9 @@ return [
 
     'exp_gallery_wide' => 'Award ceremony at the World Taekwondo Championships, Baku 2023',
     'exp_gallery_caption' => 'Baku, 2023 · World Taekwondo Championships',
-    'exp_gallery_match' => 'A moment from a taekwondo bout',
-    'exp_gallery_ceremony' => 'Award ceremony at a taekwondo competition',
+    'exp_gallery_arena' => 'Our team in the arena of the World Taekwondo Championships, Baku 2023',
+    'exp_gallery_stage' => 'Our team by the award stage of the World Taekwondo Championships, Baku 2023',
+    'exp_gallery_banner' => 'Our team by the official banner of the World Taekwondo Championships, Baku 2023',
 
     'faq_ask' => 'Ask on WhatsApp',
 
@@ -60,13 +68,15 @@ return [
     'form_service_any' => 'Full package / not sure yet',
     'form_message' => 'Message',
     'form_message_ph' => 'A few words about your restaurant and question',
-    'form_submit' => 'Send request',
-    'form_note' => 'Your details are used only to contact you.',
+    'form_submit' => 'Send via WhatsApp',
+    'form_note' => 'WhatsApp will open with your message ready — just send it.',
+    'form_wa_hint' => 'Don\'t forget to send the message in WhatsApp. If WhatsApp didn\'t open, use the button below.',
+    'form_wa_open' => 'Open WhatsApp',
     'form_again' => 'New request',
-    'form_error' => 'Sending failed. Please try again a little later or message us on WhatsApp: {phone}.',
 
     'ig_profile' => 'Our Instagram',
     'ig_follow' => 'Follow on Instagram',
+    'tt_follow' => 'Watch on TikTok',
 
     'footer_back_top' => 'Cost Control Services — back to top',
     'footer_nav_label' => 'Footer menu',

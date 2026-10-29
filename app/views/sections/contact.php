@@ -1,8 +1,19 @@
 <?php
-/** Contacts from Admin → Settings and the request form (posts to /api/contact.php via site.js). */
+/**
+ * Contacts from Admin → Settings and the request form: site.js saves it via /api/contact.php
+ * and opens the visitor's WhatsApp with the request as a message to our number.
+ */
 defined('CCS') || exit;
 
 $email = setting('contact_email');
+$waLabels = [
+    'intro' => ui('wa_msg_intro'),
+    'name' => ui('wa_msg_name'),
+    'phone' => ui('wa_msg_phone'),
+    'company' => ui('wa_msg_company'),
+    'service' => ui('wa_msg_service'),
+    'message' => ui('wa_msg_message'),
+];
 ?>
 <!-- SECTION: contact -->
 <section class="contact section" id="elaqe">
@@ -23,7 +34,7 @@ $email = setting('contact_email');
       </ul>
     </div>
 
-    <form class="form" method="post" action="/api/contact.php" novalidate data-form data-error="<?= e(ui('form_error', ['phone' => phone_display()])) ?>" data-reveal style="--delay:.1s">
+    <form class="form" method="post" action="/api/contact.php" novalidate data-form data-wa="<?= e(whatsapp_url()) ?>" data-i18n="<?= e(json_encode($waLabels, JSON_UNESCAPED_UNICODE)) ?>" data-reveal style="--delay:.1s">
       <input type="hidden" name="source" value="<?= e($pageKey . '-' . site_lang()) ?>">
       <div class="form__trap" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
       <div class="form__fields">
@@ -61,7 +72,7 @@ $email = setting('contact_email');
           <textarea id="f-message" name="message" rows="4" placeholder="<?= e(ui('form_message_ph')) ?>"></textarea>
         </div>
         <div class="form__footer">
-          <button class="btn btn--primary" type="submit"><?= e(ui('form_submit')) ?> <svg class="icon"><use href="#i-arrow"/></svg></button>
+          <button class="btn btn--primary" type="submit"><svg class="icon icon--fill"><use href="#i-whatsapp"/></svg> <?= e(ui('form_submit')) ?></button>
           <p class="form__note"><?= e(ui('form_note')) ?></p>
         </div>
       </div>
@@ -69,6 +80,8 @@ $email = setting('contact_email');
         <span class="form__success-ic"><svg class="icon"><use href="#i-check"/></svg></span>
         <h3><?= e(txt('contact.success_title')) ?></h3>
         <p><?= rich(txt('contact.success')) ?></p>
+        <p class="form__wa-hint"><?= e(ui('form_wa_hint')) ?></p>
+        <a class="btn btn--primary" href="<?= e(whatsapp_url()) ?>" target="_blank" rel="noopener" data-wa-link><svg class="icon icon--fill"><use href="#i-whatsapp"/></svg> <?= e(ui('form_wa_open')) ?></a>
         <button class="btn btn--ghost btn--sm" type="button" data-form-reset><?= e(ui('form_again')) ?></button>
       </div>
     </form>

@@ -16,6 +16,9 @@ const PAGE_ITEMS = [
     'faqs' => ['nav.faq', 'faq.php', [
         ['SELECT * FROM faqs WHERE is_active = 1', ['question', 'answer']],
     ]],
+    'projects' => ['nav.projects', 'projects.php', [
+        ['SELECT * FROM projects WHERE is_active = 1', ['tag', 'text', 'caption']],
+    ]],
 ];
 
 /** Per language [filled, total] for a set of values; optional values count only where the AZ text exists. */

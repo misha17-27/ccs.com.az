@@ -43,11 +43,7 @@ return [
     'calc_cost_default' => '4.20',
     'calc_price_default' => '12.00',
 
-    'exp_gallery_wide' => 'Award ceremony at the World Taekwondo Championships, Baku 2023',
-    'exp_gallery_caption' => 'Baku, 2023 · World Taekwondo Championships',
-    'exp_gallery_arena' => 'Our team in the arena of the World Taekwondo Championships, Baku 2023',
-    'exp_gallery_stage' => 'Our team by the award stage of the World Taekwondo Championships, Baku 2023',
-    'exp_gallery_banner' => 'Our team by the official banner of the World Taekwondo Championships, Baku 2023',
+    'exp_photos' => '{n} photos',
 
     'faq_ask' => 'Ask on WhatsApp',
 

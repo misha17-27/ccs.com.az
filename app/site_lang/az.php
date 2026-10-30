@@ -43,11 +43,7 @@ return [
     'calc_cost_default' => '4,20',
     'calc_price_default' => '12,00',
 
-    'exp_gallery_wide' => 'Bakı 2023 Taekvondo üzrə Dünya Çempionatında mükafatlandırma mərasimi',
-    'exp_gallery_caption' => 'Bakı, 2023 · Taekvondo üzrə Dünya Çempionatı',
-    'exp_gallery_arena' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının arenasında',
-    'exp_gallery_stage' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının mükafatlandırma səhnəsi önündə',
-    'exp_gallery_banner' => 'Komandamız Bakı 2023 Taekvondo üzrə Dünya Çempionatının rəsmi bannerı önündə',
+    'exp_photos' => '{n} foto',
 
     'faq_ask' => 'WhatsApp-da sual verin',
 

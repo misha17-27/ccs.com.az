@@ -190,6 +190,30 @@ function store_upload(string $field, string $folder): ?string
     if (!$file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
         return null;
     }
+    return store_upload_file($file, $folder);
+}
+
+/** Files of a multiple file input (name="field[]"), each as a single $_FILES entry; empty slots are skipped. */
+function uploaded_files(string $field): array
+{
+    $files = $_FILES[$field] ?? null;
+    if (!$files || !is_array($files['name'] ?? null)) {
+        return [];
+    }
+    $out = [];
+    foreach (array_keys($files['name']) as $i) {
+        if (($files['error'][$i] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+        $out[] = array_combine(['name', 'type', 'tmp_name', 'error', 'size'],
+            [$files['name'][$i], $files['type'][$i], $files['tmp_name'][$i], $files['error'][$i], $files['size'][$i]]);
+    }
+    return $out;
+}
+
+/** Stores one uploaded file (a $_FILES entry) like store_upload(); throws on invalid input. */
+function store_upload_file(array $file, string $folder): string
+{
     if ($file['error'] !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])) {
         throw new RuntimeException(t('upload.failed'));
     }
@@ -212,6 +236,47 @@ function store_upload(string $field, string $folder): ?string
     }
     @chmod($dir . '/' . $name, 0644);
     return UPLOADS_URL . '/' . $folder . '/' . $name;
+}
+
+/**
+ * Scales a stored JPEG photo down to $max px on the long side (phone photos are often 3–5 MB) and
+ * turns it upright. Left as it is without GD, or when its EXIF orientation cannot be read.
+ */
+function shrink_photo(string $path, int $max = 1600): void
+{
+    $file = UPLOADS_DIR . substr($path, strlen(UPLOADS_URL));
+    $info = @getimagesize($file);
+    if (!$info || $info[2] !== IMAGETYPE_JPEG || !function_exists('imagecreatefromjpeg')) {
+        return;
+    }
+    if (function_exists('exif_read_data')) {
+        $orientation = (int)(@exif_read_data($file)['Orientation'] ?? 1);
+    } else {
+        $orientation = str_contains((string)file_get_contents($file, false, null, 0, 65536), "Exif\0\0") ? 0 : 1;
+    }
+    $turn = [1 => 0, 3 => 180, 6 => -90, 8 => 90][$orientation] ?? null;   // mirrored or unknown: keep the file
+    if ($turn === null || ($turn === 0 && max($info[0], $info[1]) <= $max)) {
+        return;
+    }
+    $img = @imagecreatefromjpeg($file);
+    if (!$img) {
+        return;
+    }
+    if ($turn) {
+        $turned = imagerotate($img, $turn, 0);
+        imagedestroy($img);
+        $img = $turned;
+    }
+    [$w, $h] = [imagesx($img), imagesy($img)];
+    if (max($w, $h) > $max) {
+        $k = $max / max($w, $h);
+        $scaled = imagescale($img, (int)round($w * $k), (int)round($h * $k), IMG_BICUBIC);
+        imagedestroy($img);
+        $img = $scaled;
+    }
+    imageinterlace($img, true);
+    imagejpeg($img, $file, 82);
+    imagedestroy($img);
 }
 
 /** Deletes a file previously stored by store_upload(); other paths are left alone. */

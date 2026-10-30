@@ -276,6 +276,14 @@ input[type="file"] { max-width: 100%; font: 500 14px var(--font); }
 .logo-card__name { font-weight: 700; font-size: 14px; }
 .logo-card__meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
+/* project photos */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.photo-card { position: relative; display: grid; gap: 10px; align-content: start; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.photo-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; background: var(--bg); }
+.photo-card__badge { position: absolute; top: 18px; left: 18px; padding: 3px 9px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; }
+.photo-card input[type="number"] { max-width: none; }
+.inline-link { color: var(--accent); font-weight: 600; }
+
 /* request detail */
 .detail { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; margin: 0; }
 .detail dt { color: var(--muted); font-size: 14px; }

@@ -8,7 +8,7 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 
 function db(): PDO
 {
@@ -50,6 +50,10 @@ function migrate(PDO $pdo): void
         }
         if ($version < 4) {
             seed_new_texts($pdo);
+        }
+        if ($version < 5) {
+            create_schema_v5($pdo);
+            seed_projects($pdo);
         }
         $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
         $pdo->commit();
@@ -338,4 +342,54 @@ function seed_new_texts(PDO $pdo): void
     foreach (TEXT_FIELDS as $key => $def) {
         $text->execute([$key, ...ml_values($def[4]), now()]);
     }
+}
+
+/** v5: projects of the experience block (Admin → Projects) with up to four photos each. */
+function create_schema_v5(PDO $pdo): void
+{
+    $ml = 'ml_columns';
+    $pdo->exec("CREATE TABLE projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sort INTEGER NOT NULL DEFAULT 0,
+        is_active INTEGER NOT NULL DEFAULT 1,
+        {$ml('tag')},
+        {$ml('text', ' NOT NULL')},
+        {$ml('caption')},
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL)");
+
+    $pdo->exec("CREATE TABLE project_photos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+        path TEXT NOT NULL,
+        focus TEXT NOT NULL DEFAULT 'center',
+        sort INTEGER NOT NULL DEFAULT 0)");
+}
+
+/** The two paragraphs of the experience block become its first projects; texts edited in the admin are kept. */
+function seed_projects(PDO $pdo): void
+{
+    $t = now();
+    $old = [];
+    foreach ($pdo->query("SELECT * FROM texts WHERE key IN ('experience.tag1', 'experience.p1', 'experience.tag2', 'experience.p2')") as $row) {
+        $old[$row['key']] = ['az' => (string)$row['value_az'], 'ru' => (string)$row['value_ru'], 'en' => (string)$row['value_en']];
+    }
+
+    $project = $pdo->prepare('INSERT INTO projects (sort, tag_az, tag_ru, tag_en, text_az, text_ru, text_en, caption_az, caption_ru, caption_en,
+        created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $photo = $pdo->prepare('INSERT INTO project_photos (project_id, path, focus, sort) VALUES (?, ?, ?, ?)');
+    foreach (SEED_PROJECTS as $i => [$tag, $text, $caption, $photos]) {
+        $n = $i + 1;
+        $tag = $old["experience.tag{$n}"] ?? $tag;
+        $text = $old["experience.p{$n}"] ?? $text;
+        if (trim($text['az']) === '') {
+            continue;   // the paragraph was emptied in the admin
+        }
+        $project->execute([$n * 10, ...ml_values($tag), ...ml_values($text), ...ml_values($caption), $t, $t]);
+        $id = (int)$pdo->lastInsertId();
+        foreach ($photos as $j => [$file, $focus]) {
+            $photo->execute([$id, '/assets/img/experience/' . $file, $focus, ($j + 1) * 10]);
+        }
+    }
+    $pdo->exec("DELETE FROM texts WHERE key IN ('experience.tag1', 'experience.p1', 'experience.tag2', 'experience.p2')");
 }

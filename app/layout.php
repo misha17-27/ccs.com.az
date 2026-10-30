@@ -38,6 +38,7 @@ const ICONS = [
     'optimize' => '<circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
     'recipe' => '<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h6M9 17h4"/>',
     'inventory' => '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5zM3 7.5 12 12l9-4.5M12 12v9"/>',
+    'award' => '<circle cx="12" cy="9" r="6"/><path d="m8.5 13.8-1.5 7.2 5-3 5 3-1.5-7.2"/>',
     'shield' => '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
 ];
 
@@ -66,6 +67,7 @@ function admin_nav(array $user): array
             ['pages', 'pages.php', 'pages'],
             ['services', 'services.php', 'briefcase'],
             ['partners', 'partners.php', 'globe'],
+            ['projects', 'projects.php', 'award'],
             ['faq', 'faq.php', 'help'],
             ['about', 'texts.php?g=about', 'users'],
         ],

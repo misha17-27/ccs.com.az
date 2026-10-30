@@ -171,6 +171,20 @@ function site_faqs(): array
     return db()->query('SELECT * FROM faqs WHERE is_active = 1 ORDER BY sort, id')->fetchAll();
 }
 
+/** Active projects of the experience block, each with its 'photos' (at most PROJECT_PHOTOS_MAX). */
+function site_projects(): array
+{
+    $db = db();
+    $photos = [];
+    foreach ($db->query('SELECT * FROM project_photos ORDER BY sort, id') as $photo) {
+        $photos[$photo['project_id']][] = $photo;
+    }
+    return array_map(
+        static fn(array $p) => $p + ['photos' => array_slice($photos[$p['id']] ?? [], 0, PROJECT_PHOTOS_MAX)],
+        $db->query('SELECT * FROM projects WHERE is_active = 1 ORDER BY sort, id')->fetchAll()
+    );
+}
+
 // ---------- Contacts (Admin → Settings) ----------
 
 function phone_display(): string

@@ -150,6 +150,39 @@
     window.addEventListener('hashchange', fromHash);
   }
 
+  /* ---------- Experience: a click on a project shows its photos ---------- */
+  const exp = document.querySelector('[data-exp]');
+  if (exp) {
+    const expTabs = [...exp.querySelectorAll('[data-exp-tab]')];
+    const galleryOf = (tab) => document.getElementById(tab.getAttribute('aria-controls'));
+
+    expTabs.forEach((tab) => tab.addEventListener('click', () => {
+      if (tab.getAttribute('aria-pressed') === 'true') return;
+      expTabs.forEach((t) => {
+        t.setAttribute('aria-pressed', String(t === tab));
+        galleryOf(t).hidden = t !== tab;
+      });
+      // on phones the gallery is under the list: bring it into view
+      const rect = galleryOf(tab).getBoundingClientRect();
+      if (rect.top > window.innerHeight - 120 || rect.bottom < 80) {
+        galleryOf(tab).scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+      }
+    }));
+
+    // photos of the other projects are fetched as the block comes near, so a click shows them at once
+    const loadPhotos = () => exp.querySelectorAll('[data-exp-img]').forEach((img) => { img.loading = 'eager'; });
+    if (hasIO && expTabs.length) {
+      new IntersectionObserver((entries, obs) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          loadPhotos();
+          obs.disconnect();
+        }
+      }, { rootMargin: '600px 0px' }).observe(exp);
+    } else if (expTabs.length) {
+      loadPhotos();
+    }
+  }
+
   /* ---------- "Apply for this service" links preselect the form ---------- */
   const serviceSelect = document.getElementById('f-service');
   document.querySelectorAll('[data-service]').forEach((link) => {

@@ -162,18 +162,6 @@ const TEXT_FIELDS = [
         'ru' => 'От чемпионата мира до проектов *национальной кухни*',
         'en' => 'From a world championship to *national cuisine* projects',
     ]],
-    'experience.tag1' => ['experience', 'Nişan 1', 'Метка 1', 'line', ['az' => '200+ ölkə', 'ru' => '200+ стран', 'en' => '200+ countries']],
-    'experience.p1' => ['experience', 'Abzas 1', 'Абзац 1', 'area', [
-        'az' => '200-dən çox ölkənin qatıldığı Taekvondo üzrə Dünya Çempionatında qida sektorunun keyfiyyətə nəzarət və tənzimləmə prosesinin birbaşa həyata keçirilməsi.',
-        'ru' => 'Непосредственное ведение контроля качества и регулирования питания на Чемпионате мира по тхэквондо, в котором участвовали более 200 стран.',
-        'en' => 'Directly running quality control and regulation of food services at the World Taekwondo Championships, with more than 200 participating countries.',
-    ]],
-    'experience.tag2' => ['experience', 'Nişan 2', 'Метка 2', 'line', ['az' => 'AZ · KZ', 'ru' => 'AZ · KZ', 'en' => 'AZ · KZ']],
-    'experience.p2' => ['experience', 'Abzas 2', 'Абзац 2', 'area', [
-        'az' => '**Beynəlxalq fəaliyyət:** Azərbaycanla yanaşı, Qazaxıstan kimi xarici bazarlarda da milli mətbəx layihələri ilə əməkdaşlıq.',
-        'ru' => '**Международная работа:** помимо Азербайджана — сотрудничество с проектами национальной кухни на зарубежных рынках, например в Казахстане.',
-        'en' => '**International work:** besides Azerbaijan, we collaborate with national cuisine projects in foreign markets such as Kazakhstan.',
-    ]],
 
     'faq.eyebrow' => ['faq', 'Kiçik başlıq', 'Надзаголовок', 'line', ['az' => 'Suallar', 'ru' => 'Вопросы', 'en' => 'FAQ']],
     'faq.title' => ['faq', 'Başlıq', 'Заголовок', 'line', [
@@ -252,7 +240,7 @@ const TEXT_FIELDS = [
 const PAGES = [
     'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'groups' => ['hero', 'facts', 'calc', 'tiktok', 'instagram'], 'items' => [],
         'sections' => ['hero', 'about', 'services', 'calc', 'clients', 'experience', 'tiktok', 'contact', 'instagram']],
-    'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'groups' => ['about', 'experience'], 'items' => [],
+    'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'groups' => ['about', 'experience'], 'items' => ['projects'],
         'sections' => ['about', 'experience', 'clients', 'contact']],
     'services' => ['az' => 'Xidmətlər (siyahı)', 'ru' => 'Услуги (список)', 'slug' => 'xidmetler', 'groups' => ['services', 'calc'], 'items' => ['services'],
         'sections' => ['services', 'calc', 'contact']],
@@ -481,6 +469,34 @@ const SEED_PARTNERS = [
     ['Pivnaya Apteka', 'pivnaya-apteka'], ['Manzara', 'manzara'], ['Resant Hotels & Restaurants', 'resant'],
     ['Cəviz Tea & Lounge', 'caviz'], ['Stop Cafe', 'stop-cafe'], ['Water Garden', 'water-garden'],
     ['Lupin Coffee', 'lupin-coffee'], ['Best Place Baku', 'best-place'],
+];
+
+/** Photos of a project in the experience block: at most 4 (the gallery layouts in site.css); focus => object-position. */
+const PROJECT_PHOTOS_MAX = 4;
+const PHOTO_FOCUS = ['center' => '50% 50%', 'left' => '20% 50%', 'right' => '80% 50%', 'top' => '50% 20%', 'bottom' => '50% 80%'];
+
+/** Projects of the experience block: [tag, text, photo caption, [[photo in /assets/img/experience/, focus], …]] */
+const SEED_PROJECTS = [
+    [
+        ['az' => '200+ ölkə', 'ru' => '200+ стран', 'en' => '200+ countries'],
+        [
+            'az' => '200-dən çox ölkənin qatıldığı Taekvondo üzrə Dünya Çempionatında qida sektorunun keyfiyyətə nəzarət və tənzimləmə prosesinin birbaşa həyata keçirilməsi.',
+            'ru' => 'Непосредственное ведение контроля качества и регулирования питания на Чемпионате мира по тхэквондо, в котором участвовали более 200 стран.',
+            'en' => 'Directly running quality control and regulation of food services at the World Taekwondo Championships, with more than 200 participating countries.',
+        ],
+        ['az' => 'Bakı, 2023 · Taekvondo üzrə Dünya Çempionatı', 'ru' => 'Баку, 2023 · Чемпионат мира по тхэквондо', 'en' => 'Baku, 2023 · World Taekwondo Championships'],
+        [['wtc-baku-2023.jpg', 'center'], ['wtc-team-arena.jpg', 'right'], ['wtc-team-stage.jpg', 'center'], ['wtc-team-banner.jpg', 'center']],
+    ],
+    [
+        ['az' => 'AZ · KZ', 'ru' => 'AZ · KZ', 'en' => 'AZ · KZ'],
+        [
+            'az' => '**Beynəlxalq fəaliyyət:** Azərbaycanla yanaşı, Qazaxıstan kimi xarici bazarlarda da milli mətbəx layihələri ilə əməkdaşlıq.',
+            'ru' => '**Международная работа:** помимо Азербайджана — сотрудничество с проектами национальной кухни на зарубежных рынках, например в Казахстане.',
+            'en' => '**International work:** besides Azerbaijan, we collaborate with national cuisine projects in foreign markets such as Kazakhstan.',
+        ],
+        ['az' => '', 'ru' => '', 'en' => ''],
+        [],
+    ],
 ];
 
 /** [question, answer]; every text is ['az' => …, 'ru' => …, 'en' => …] */

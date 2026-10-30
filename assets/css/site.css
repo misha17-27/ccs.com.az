@@ -788,7 +788,9 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   gap: clamp(32px, 5vw, 80px);
   align-items: center;
 }
+.experience__grid--text { grid-template-columns: minmax(0, 760px); }
 .experience__text .section-title { margin-bottom: 36px; }
+.exp-list { margin: 0; padding: 0; list-style: none; }
 .exp-item {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -798,6 +800,43 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   color: var(--muted);
 }
 .exp-item strong { color: #fff; font-weight: 600; }
+.exp-item--plain { grid-template-columns: 1fr; }
+.exp-item__text { display: block; }
+/* a project with photos: a click shows them in the gallery */
+.exp-item--btn {
+  width: 100%;
+  grid-template-columns: auto 1fr auto;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  font: inherit;
+  line-height: inherit;
+  text-align: left;
+  transition: color .3s;
+}
+.exp-item--btn.exp-item--plain { grid-template-columns: 1fr auto; }
+.exp-item--btn:hover,
+.exp-item--btn[aria-pressed="true"] { color: #D6D4EA; }
+.exp-item--btn .exp-item__tag { transition: background-color .3s, border-color .3s, color .3s, box-shadow .3s; }
+.exp-item--btn[aria-pressed="true"] .exp-item__tag {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  box-shadow: 0 10px 24px -12px rgba(47, 107, 255, .9);
+}
+.exp-item__photos {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 5px;
+  color: var(--muted-2);
+  font-size: .8rem;
+  font-weight: 600;
+  transition: color .3s;
+}
+.exp-item__photos .icon { width: 16px; height: 16px; }
+.exp-item--btn:hover .exp-item__photos,
+.exp-item--btn[aria-pressed="true"] .exp-item__photos { color: var(--blue-2); }
 .exp-item__tag {
   align-self: start;
   min-width: 92px;
@@ -825,6 +864,12 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   background: var(--surface);
 }
 .gallery__item--big { grid-column: span 2; aspect-ratio: 4 / 3; }
+.experience__gallery[hidden] { display: none; }
+.experience__gallery { animation: panel-in .55s var(--ease); }
+/* 1 photo: one wide frame; 3 photos: a large square beside two small ones (2 and 4 photos: the bento above) */
+.experience__gallery--n1 .gallery__item { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+.experience__gallery--n3 .gallery__item { aspect-ratio: 1; }
+.experience__gallery--n3 .gallery__item:first-child { grid-column: span 2; grid-row: span 2; }
 .gallery__item img {
   position: absolute;
   inset: 0;
@@ -1486,6 +1531,9 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   .form__fields { grid-template-columns: 1fr; }
   .exp-item { grid-template-columns: 1fr; gap: 12px; }
   .exp-item__tag { justify-self: start; }
+  .exp-item--btn { grid-template-columns: 1fr auto; }
+  .exp-item--btn .exp-item__text { grid-column: 1 / -1; }
+  .exp-item--btn .exp-item__photos { grid-row: 1; grid-column: 2; }
   .calc__fields { grid-template-columns: minmax(0, 1fr); }
   .cfield__range { grid-template-columns: minmax(0, 1fr) 100px; }
   .calc__stats { grid-template-columns: minmax(0, 1fr); }

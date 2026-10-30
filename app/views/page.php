@@ -14,7 +14,11 @@ $isHome = $pageKey === 'home';
 $name = $page ? pick($page, 'name') : ui('not_found_title');
 $title = $page ? (pick($page, 'seo_title') ?: $name . ' — ' . SITE_NAME) : ui('not_found_title') . ' — ' . SITE_NAME;
 $description = $page ? pick($page, 'seo_description') : '';
-$ogImage = $page && $page['og_image'] ? $page['og_image'] : ($pages['home']['og_image'] ?? '');
+$keywords = $page ? pick($page, 'keywords') : '';
+// Inner pages: the H1 and the text under it, falling back to the menu name and the SEO description
+$h1 = $page ? (pick($page, 'h1') ?: $name) : '';
+$lead = $page ? (pick($page, 'lead') ?: $description) : '';
+$ogImage = ($page['og_image'] ?? '') ?: ($pages['home']['og_image'] ?? '') ?: (is_file(BASE_PATH . DEFAULT_OG_IMAGE) ? DEFAULT_OG_IMAGE : '');
 $origin = site_origin();
 $sections = $page ? PAGES[$pageKey]['sections'] : [];
 $navKeys = array_values(array_diff(array_keys($pages), ['home']));
@@ -27,6 +31,9 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
   <title><?= e($title) ?></title>
 <?php if ($description !== ''): ?>
   <meta name="description" content="<?= e($description) ?>">
+<?php endif; ?>
+<?php if ($keywords !== ''): ?>
+  <meta name="keywords" content="<?= e($keywords) ?>">
 <?php endif; ?>
 <?php if ($page): ?>
   <link rel="canonical" href="<?= e($origin . url($pageKey)) ?>">
@@ -50,7 +57,11 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
 <?php endif; ?>
 <?php if ($ogImage): ?>
   <meta property="og:image" content="<?= e($origin . $ogImage) ?>">
+  <meta property="og:image:alt" content="<?= e($title) ?>">
   <meta name="twitter:card" content="summary_large_image">
+<?php endif; ?>
+<?php if ($page): ?>
+  <script type="application/ld+json"><?= json_encode(site_schema($pageKey), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 <?php endif; ?>
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,7 +112,7 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
 <main id="main">
 <?php if ($isHome): ?>
 <?php elseif ($page): ?>
-  <?php section('page-head', ['name' => $name, 'lead' => $description]); ?>
+  <?php section('page-head', ['name' => $name, 'title' => $h1, 'lead' => $lead]); ?>
 <?php else: ?>
   <?php section('not-found'); ?>
 <?php endif; ?>

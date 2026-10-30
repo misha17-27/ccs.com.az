@@ -20,32 +20,33 @@ const TEXT_GROUPS = [
     'experience' => ['az' => 'Təcrübə', 'ru' => 'Опыт'],
     'faq' => ['az' => 'Suallar bölməsi', 'ru' => 'Блок вопросов'],
     'contact' => ['az' => 'Əlaqə bölməsi', 'ru' => 'Блок контактов'],
+    'form' => ['az' => 'Müraciət forması', 'ru' => 'Форма заявки'],
     'tiktok' => ['az' => 'TikTok', 'ru' => 'TikTok'],
     'instagram' => ['az' => 'Instagram', 'ru' => 'Instagram'],
-    'footer' => ['az' => 'Footer', 'ru' => 'Подвал'],
+    'footer' => ['az' => 'Footer və 404', 'ru' => 'Подвал и 404'],
 ];
 
 /** key => [group, label az, label ru, 'line'|'area', default ['az' => …, 'ru' => …, 'en' => …]] */
 const TEXT_FIELDS = [
     'hero.eyebrow' => ['hero', 'Kiçik başlıq', 'Надзаголовок', 'line', [
-        'az' => 'İaşə və restoran sektoru üçün xərclərə nəzarət',
-        'ru' => 'Контроль затрат для ресторанов и общепита',
-        'en' => 'Cost control for restaurants and food service',
+        'az' => 'Restoran auditi və xərclərə nəzarət · Bakı',
+        'ru' => 'Аудит ресторанов и контроль затрат · Баку',
+        'en' => 'Restaurant audit and cost control · Baku',
     ]],
-    'hero.title' => ['hero', 'Başlıq', 'Заголовок', 'line', [
-        'az' => 'Restoranınızın *hər qəpiyi* nəzarət altında',
-        'ru' => '*Каждый манат* вашего ресторана под контролем',
-        'en' => '*Every manat* of your restaurant under control',
+    'hero.title' => ['hero', 'Başlıq (səhifənin H1-i)', 'Заголовок (H1 страницы)', 'line', [
+        'az' => 'Restoran auditi — *hər qəpiyiniz* nəzarət altında',
+        'ru' => 'Аудит ресторана — *каждый манат* под контролем',
+        'en' => 'Restaurant audit — *every manat* under control',
     ]],
     'hero.lead' => ['hero', 'Mətn', 'Текст', 'area', [
-        'az' => 'Restoran biznesində uğurun sirri təkcə dadlı yemək deyil. Hər bir xammalın, resursun və maliyyə axınının dəqiq uçotunu qurur, gizli israfları və boşluqları dərhal aşkarlayırıq.',
-        'ru' => 'Успех ресторана — это не только вкусная еда. Мы выстраиваем точный учёт каждого продукта, ресурса и денежного потока и сразу находим скрытые потери и слабые места.',
-        'en' => 'A successful restaurant takes more than great food. We set up precise accounting for every ingredient, resource and cash flow, and quickly uncover hidden waste and gaps.',
+        'az' => 'Restoran biznesində uğurun sirri təkcə dadlı yemək deyil. Restoran auditi ilə hər bir xammalın, resursun və maliyyə axınının dəqiq uçotunu qurur, gizli israfları və boşluqları dərhal aşkarlayırıq.',
+        'ru' => 'Успех ресторана — это не только вкусная еда. Проводим аудит ресторана, выстраиваем точный учёт каждого продукта, ресурса и денежного потока и сразу находим скрытые потери и слабые места.',
+        'en' => 'A successful restaurant takes more than great food. With a restaurant audit, we set up precise accounting for every ingredient, resource and cash flow, and quickly uncover hidden waste and gaps.',
     ]],
     'hero.cta' => ['hero', 'Düymə mətni', 'Текст кнопки', 'line', [
-        'az' => 'Konsultasiya al',
-        'ru' => 'Получить консультацию',
-        'en' => 'Get a consultation',
+        'az' => 'Restoran auditi sifariş et',
+        'ru' => 'Заказать аудит ресторана',
+        'en' => 'Order a restaurant audit',
     ]],
     'hero.card_title' => ['hero', 'Kartın başlığı', 'Заголовок карточки', 'line', [
         'az' => 'Restoranınız üçün',
@@ -91,14 +92,14 @@ const TEXT_FIELDS = [
         'en' => 'Since late 2021',
     ]],
     'about.p1' => ['about', 'Abzas 1', 'Абзац 1', 'area', [
-        'az' => '“Cost Control” şirkəti post-pandemiya dövrünün çətin və dinamik reallıqları fonunda — 2021-ci ilin sonlarından etibarən iaşə və restoran sektorunda peşəkar idarəetmə boşluqlarını doldurmaq məqsədilə təsis edilmişdir.',
-        'ru' => 'Компания «Cost Control» основана в конце 2021 года, на фоне непростых и быстро меняющихся реалий постпандемийного времени, чтобы восполнить нехватку профессионального управления в ресторанной сфере и общепите.',
-        'en' => 'Cost Control was founded in late 2021, amid the challenging and fast-changing realities of the post-pandemic period, to fill the gap in professional management across the restaurant and food service sector.',
+        'az' => '“Cost Control” şirkəti post-pandemiya dövrünün çətin və dinamik reallıqları fonunda — 2021-ci ilin sonlarından etibarən iaşə və restoran sektorunda peşəkar idarəetmə boşluqlarını doldurmaq məqsədilə təsis edilmişdir. Bu gün Bakıda restoran auditi və xərclərə nəzarət üzrə ixtisaslaşırıq.',
+        'ru' => 'Компания «Cost Control» основана в конце 2021 года, на фоне непростых и быстро меняющихся реалий постпандемийного времени, чтобы восполнить нехватку профессионального управления в ресторанной сфере и общепите. Сегодня мы специализируемся на аудите ресторанов и контроле затрат в Баку.',
+        'en' => 'Cost Control was founded in late 2021, amid the challenging and fast-changing realities of the post-pandemic period, to fill the gap in professional management across the restaurant and food service sector. Today we specialise in restaurant audits and cost control in Baku.',
     ]],
     'about.p2' => ['about', 'Abzas 2', 'Абзац 2', 'area', [
-        'az' => 'Restoran biznesində uğurun sirri təkcə dadlı yemək deyil, hər bir xammalın, resursun və maliyyə axınının dəqiq uçotundan asılıdır. Cost Control mexanizmlərimiz sayəsində biznesdəki **gizli israflar, artan maya dəyəri** və **ehtiyatların idarə olunmasındakı boşluqlar** dərhal aşkarlanır.',
-        'ru' => 'Успех ресторана зависит не только от вкусной еды, но и от точного учёта каждого продукта, ресурса и денежного потока. Наши механизмы cost control сразу выявляют **скрытые потери, рост себестоимости** и **пробелы в управлении запасами**.',
-        'en' => 'Restaurant success depends not only on great food but on precise accounting of every ingredient, resource and cash flow. Our cost control mechanisms quickly reveal **hidden waste, rising food costs** and **gaps in inventory management**.',
+        'az' => 'Restoran biznesində uğurun sirri təkcə dadlı yemək deyil, hər bir xammalın, resursun və maliyyə axınının dəqiq uçotundan asılıdır. Restoran auditi və Cost Control mexanizmlərimiz sayəsində biznesdəki **gizli israflar, artan maya dəyəri** və **ehtiyatların idarə olunmasındakı boşluqlar** dərhal aşkarlanır.',
+        'ru' => 'Успех ресторана зависит не только от вкусной еды, но и от точного учёта каждого продукта, ресурса и денежного потока. Аудит ресторана и наши механизмы cost control сразу выявляют **скрытые потери, рост себестоимости** и **пробелы в управлении запасами**.',
+        'en' => 'Restaurant success depends not only on great food but on precise accounting of every ingredient, resource and cash flow. Our restaurant audit and cost control mechanisms quickly reveal **hidden waste, rising food costs** and **gaps in inventory management**.',
     ]],
     'about.p3' => ['about', 'Abzas 3', 'Абзац 3', 'area', [
         'az' => 'Böyük şəbəkələrin idarə olunmasında qazanılmış qabaqcıl təcrübələr və standartlar kiçik və orta ölçülü restoranlara uyğunlaşdırılır. Bu yanaşma həm yerli bazarda yeni obyektlərin sıfırdan qurulmasına münbit şərait yaradır, həm də mövcud restoranların gəlirliliyini maksimum səviyyəyə qaldırır.',
@@ -106,16 +107,20 @@ const TEXT_FIELDS = [
         'en' => 'We adapt best practices and standards proven in large chains to small and mid-sized restaurants. This approach helps launch new venues from scratch in the local market and pushes the profitability of existing restaurants to its maximum.',
     ]],
 
-    'services.eyebrow' => ['services', 'Kiçik başlıq', 'Надзаголовок', 'line', ['az' => 'Xidmətlərimiz', 'ru' => 'Наши услуги', 'en' => 'Our services']],
+    'services.eyebrow' => ['services', 'Kiçik başlıq', 'Надзаголовок', 'line', [
+        'az' => 'Restoran auditi xidmətləri',
+        'ru' => 'Услуги аудита ресторана',
+        'en' => 'Restaurant audit services',
+    ]],
     'services.title' => ['services', 'Başlıq', 'Заголовок', 'line', [
         'az' => 'Altı istiqamət, bir məqsəd — *gəlirli restoran*',
         'ru' => 'Шесть направлений, одна цель — *прибыльный ресторан*',
         'en' => 'Six areas, one goal — *a profitable restaurant*',
     ]],
     'services.lead' => ['services', 'Mətn', 'Текст', 'area', [
-        'az' => 'Maliyyə uçotundan anbar sayımlarına qədər restoranın bütün xərc zəncirini şəffaf və idarə olunan edirik.',
-        'ru' => 'От финансового учёта до инвентаризации склада — делаем всю цепочку затрат ресторана прозрачной и управляемой.',
-        'en' => 'From financial accounting to stock counts, we make the whole cost chain of your restaurant transparent and manageable.',
+        'az' => 'Restoran auditi maliyyə uçotundan anbar sayımlarına qədər bütün xərc zəncirini əhatə edir — biz onu şəffaf və idarə olunan edirik.',
+        'ru' => 'Аудит ресторана охватывает всю цепочку затрат — от финансового учёта до инвентаризации склада. Мы делаем её прозрачной и управляемой.',
+        'en' => 'A restaurant audit covers the whole cost chain, from financial accounting to stock counts. We make it transparent and manageable.',
     ]],
 
     'calc.eyebrow' => ['calc', 'Kiçik başlıq', 'Надзаголовок', 'line', ['az' => 'Alət', 'ru' => 'Инструмент', 'en' => 'Tool']],
@@ -147,9 +152,9 @@ const TEXT_FIELDS = [
         'en' => 'Companies we work with',
     ]],
     'clients.lead' => ['clients', 'Mətn', 'Текст', 'area', [
-        'az' => 'Restoran, kafe, lounge və otellər — müxtəlif formatlı 18 brendlə əməkdaşlıq etmişik.',
-        'ru' => 'Рестораны, кафе, лаунжи и отели — мы работали с 18 брендами разных форматов.',
-        'en' => 'Restaurants, cafés, lounges and hotels — we have worked with 18 brands of different formats.',
+        'az' => 'Restoran, kafe, lounge və otellər — restoran auditi və xərclərə nəzarət üzrə müxtəlif formatlı 18 brendlə əməkdaşlıq etmişik.',
+        'ru' => 'Рестораны, кафе, лаунжи и отели — по аудиту и контролю затрат мы работали с 18 брендами разных форматов.',
+        'en' => 'Restaurants, cafés, lounges and hotels — we have worked with 18 brands of different formats on restaurant audits and cost control.',
     ]],
 
     'experience.eyebrow' => ['experience', 'Kiçik başlıq', 'Надзаголовок', 'line', [
@@ -165,9 +170,9 @@ const TEXT_FIELDS = [
 
     'faq.eyebrow' => ['faq', 'Kiçik başlıq', 'Надзаголовок', 'line', ['az' => 'Suallar', 'ru' => 'Вопросы', 'en' => 'FAQ']],
     'faq.title' => ['faq', 'Başlıq', 'Заголовок', 'line', [
-        'az' => 'Tez-tez verilən suallar',
-        'ru' => 'Частые вопросы',
-        'en' => 'Frequently asked questions',
+        'az' => 'Restoran auditi: tez-tez verilən suallar',
+        'ru' => 'Аудит ресторана: частые вопросы',
+        'en' => 'Restaurant audit: frequently asked questions',
     ]],
     'faq.lead' => ['faq', 'Mətn', 'Текст', 'area', [
         'az' => 'Cavabını tapmadığınız sual varsa, bizə birbaşa yazın — məmnuniyyətlə izah edərik.',
@@ -182,9 +187,9 @@ const TEXT_FIELDS = [
         'en' => 'Let’s *check your restaurant’s numbers* together',
     ]],
     'contact.lead' => ['contact', 'Mətn', 'Текст', 'area', [
-        'az' => 'Müraciətinizi qoyun — mütəxəssisimiz sizinlə əlaqə saxlayacaq və restoranınız üçün uyğun həlli müzakirə edəcək.',
-        'ru' => 'Оставьте заявку — наш специалист свяжется с вами и обсудит подходящее решение для вашего ресторана.',
-        'en' => 'Leave a request and our specialist will contact you to discuss the right solution for your restaurant.',
+        'az' => 'Restoran auditi üçün müraciət qoyun — mütəxəssisimiz sizinlə əlaqə saxlayacaq və restoranınız üçün uyğun həlli müzakirə edəcək.',
+        'ru' => 'Оставьте заявку на аудит ресторана — наш специалист свяжется с вами и обсудит подходящее решение для вашего заведения.',
+        'en' => 'Leave a request for a restaurant audit and our specialist will contact you to discuss the right solution for your venue.',
     ]],
     'contact.address' => ['contact', 'Ünvan', 'Адрес', 'line', [
         'az' => 'Bakı şəhəri, Nizami rayonu, Heydər Əliyev prospekti 5',
@@ -192,9 +197,9 @@ const TEXT_FIELDS = [
         'en' => '5 Heydar Aliyev Avenue, Nizami district, Baku',
     ]],
     'contact.form_title' => ['contact', 'Formanın başlığı', 'Заголовок формы', 'line', [
-        'az' => 'Konsultasiya üçün müraciət',
-        'ru' => 'Заявка на консультацию',
-        'en' => 'Request a consultation',
+        'az' => 'Restoran auditi üçün müraciət',
+        'ru' => 'Заявка на аудит ресторана',
+        'en' => 'Request a restaurant audit',
     ]],
     'contact.success_title' => ['contact', 'Göndərildikdən sonra — başlıq', 'После отправки — заголовок', 'line', [
         'az' => 'Təşəkkür edirik!',
@@ -226,14 +231,86 @@ const TEXT_FIELDS = [
     ]],
 
     'footer.text' => ['footer', 'Qısa təsvir', 'Краткое описание', 'area', [
-        'az' => 'İaşə və restoran sektorunda peşəkar cost control xidmətləri. 2021-ci ildən bəri.',
-        'ru' => 'Профессиональный cost control для ресторанов и общепита. С 2021 года.',
-        'en' => 'Professional cost control services for restaurants and food service. Since 2021.',
+        'az' => 'Bakıda restoran auditi və xərclərə nəzarət: maya dəyəri, inventar, P&L. 2021-ci ildən bəri.',
+        'ru' => 'Аудит ресторанов и контроль затрат в Баку: себестоимость, инвентаризация, P&L. С 2021 года.',
+        'en' => 'Restaurant audit and cost control in Baku: food costing, inventory, P&L. Since 2021.',
     ]],
 ];
 
 /**
- * Site pages: fixed keys with an editable address and SEO. 'sections' are the blocks the page
+ * Interface strings of the site that Admin → Texts can change: key in app/site_lang => [group, label az, label ru, 'line'|'area'].
+ * Their defaults stay in app/site_lang/{lang}.php; a changed value is saved as the text 'ui.<key>' (see ui()).
+ */
+const UI_FIELDS = [
+    'cta_short' => ['hero', 'Yuxarı paneldəki qısa düymə (bütün səhifələrdə)', 'Короткая кнопка в шапке (на всех страницах)', 'line'],
+    'svc_apply' => ['services', '«Bu xidmət üzrə müraciət et» linki', 'Ссылка «Оставить заявку на эту услугу»', 'line'],
+
+    'calc_cost' => ['calc', 'Sahə: maya dəyəri', 'Поле: себестоимость', 'line'],
+    'calc_cost_default' => ['calc', 'Maya dəyəri — ilkin rəqəm', 'Себестоимость — начальное значение', 'line'],
+    'calc_price' => ['calc', 'Sahə: satış qiyməti', 'Поле: цена продажи', 'line'],
+    'calc_price_default' => ['calc', 'Satış qiyməti — ilkin rəqəm', 'Цена продажи — начальное значение', 'line'],
+    'calc_target' => ['calc', 'Sahə: hədəf food cost', 'Поле: целевой фудкост', 'line'],
+    'calc_fc' => ['calc', 'Nəticə: food cost', 'Результат: фудкост', 'line'],
+    'calc_target_mark' => ['calc', 'Şkalada «hədəf» işarəsi', 'Отметка «цель» на шкале', 'line'],
+    'calc_margin' => ['calc', 'Nəticə: marja / porsiya', 'Результат: маржа / порция', 'line'],
+    'calc_margin_pct' => ['calc', 'Nəticə: marja faizi', 'Результат: процент маржи', 'line'],
+    'calc_rec' => ['calc', 'Nəticə: hədəf üçün qiymət', 'Результат: цена для цели', 'line'],
+    'calc_ok' => ['calc', 'Status: hədəf daxilində', 'Статус: в пределах цели', 'line'],
+    'calc_warn' => ['calc', 'Status: hədəfdən yuxarı', 'Статус: выше цели', 'line'],
+    'calc_idle' => ['calc', 'Status: rəqəmlər daxil edilməyib', 'Статус: цифры не введены', 'line'],
+    'calc_hint_invalid' => ['calc', 'İzah: rəqəmlər səhvdir', 'Пояснение: неверные цифры', 'area'],
+    'calc_hint_ok' => ['calc', 'İzah: hədəf daxilində ({max} — maksimum maya dəyəri)', 'Пояснение: в пределах цели ({max} — максимальная себестоимость)', 'area'],
+    'calc_hint_warn' => ['calc', 'İzah: hədəfdən yuxarı ({rec} — tövsiyə olunan qiymət, {max} — maksimum maya dəyəri)', 'Пояснение: выше цели ({rec} — рекомендуемая цена, {max} — максимальная себестоимость)', 'area'],
+
+    'faq_ask' => ['faq', 'WhatsApp-da sual linki', 'Ссылка «Задать вопрос в WhatsApp»', 'line'],
+
+    'contact_address' => ['contact', 'Sahənin adı: ünvan', 'Подпись: адрес', 'line'],
+    'contact_phone' => ['contact', 'Sahənin adı: telefon', 'Подпись: телефон', 'line'],
+    'contact_whatsapp' => ['contact', 'Sahənin adı: WhatsApp', 'Подпись: WhatsApp', 'line'],
+    'contact_email' => ['contact', 'Sahənin adı: e-poçt', 'Подпись: e-mail', 'line'],
+    'contact_instagram' => ['contact', 'Sahənin adı: Instagram', 'Подпись: Instagram', 'line'],
+    'wa_label' => ['contact', 'WhatsApp düyməsi (sağ aşağı küncdə)', 'Кнопка WhatsApp (справа внизу)', 'line'],
+    'wa_greeting' => ['contact', 'WhatsApp-da hazır salam mesajı', 'Готовое приветствие в WhatsApp', 'area'],
+
+    'form_name' => ['form', 'Ad sahəsi', 'Поле имени', 'line'],
+    'form_name_ph' => ['form', 'Ad sahəsində nümunə', 'Подсказка в поле имени', 'line'],
+    'form_name_err' => ['form', 'Ad yazılmayanda xəta', 'Ошибка, если имя не указано', 'line'],
+    'form_phone' => ['form', 'Telefon sahəsi', 'Поле телефона', 'line'],
+    'form_phone_err' => ['form', 'Telefon səhv olanda xəta', 'Ошибка в номере телефона', 'line'],
+    'form_company' => ['form', 'Restoran / şirkət sahəsi', 'Поле «Ресторан / компания»', 'line'],
+    'form_company_ph' => ['form', 'Restoran sahəsində nümunə', 'Подсказка в поле ресторана', 'line'],
+    'form_service' => ['form', 'Xidmət sahəsi', 'Поле услуги', 'line'],
+    'form_service_ph' => ['form', 'Xidmət seçilməyəndə', 'Когда услуга не выбрана', 'line'],
+    'form_service_any' => ['form', '«Kompleks yanaşma» variantı', 'Вариант «Комплексный подход»', 'line'],
+    'form_message' => ['form', 'Mesaj sahəsi', 'Поле сообщения', 'line'],
+    'form_message_ph' => ['form', 'Mesaj sahəsində nümunə', 'Подсказка в поле сообщения', 'line'],
+    'form_submit' => ['form', 'Göndər düyməsi', 'Кнопка отправки', 'line'],
+    'form_note' => ['form', 'Düymənin altında qeyd', 'Примечание под кнопкой', 'line'],
+    'form_wa_hint' => ['form', 'Göndərildikdən sonra: WhatsApp xatırlatması', 'После отправки: напоминание про WhatsApp', 'area'],
+    'form_wa_open' => ['form', 'Göndərildikdən sonra: WhatsApp düyməsi', 'После отправки: кнопка WhatsApp', 'line'],
+    'form_again' => ['form', 'Göndərildikdən sonra: «Yeni müraciət» düyməsi', 'После отправки: кнопка «Новая заявка»', 'line'],
+    'wa_msg_intro' => ['form', 'WhatsApp mesajı: ilk sətir', 'Сообщение в WhatsApp: первая строка', 'line'],
+    'wa_msg_name' => ['form', 'WhatsApp mesajı: «Ad»', 'Сообщение в WhatsApp: «Имя»', 'line'],
+    'wa_msg_phone' => ['form', 'WhatsApp mesajı: «Telefon»', 'Сообщение в WhatsApp: «Телефон»', 'line'],
+    'wa_msg_company' => ['form', 'WhatsApp mesajı: «Restoran»', 'Сообщение в WhatsApp: «Ресторан»', 'line'],
+    'wa_msg_service' => ['form', 'WhatsApp mesajı: «Xidmət»', 'Сообщение в WhatsApp: «Услуга»', 'line'],
+    'wa_msg_message' => ['form', 'WhatsApp mesajı: «Mesaj»', 'Сообщение в WhatsApp: «Сообщение»', 'line'],
+
+    'tt_follow' => ['tiktok', 'Düymə mətni', 'Текст кнопки', 'line'],
+    'ig_follow' => ['instagram', 'Düymə mətni', 'Текст кнопки', 'line'],
+
+    'footer_nav' => ['footer', 'Footer: menyunun başlığı', 'Подвал: заголовок меню', 'line'],
+    'footer_services' => ['footer', 'Footer: xidmətlərin başlığı', 'Подвал: заголовок услуг', 'line'],
+    'footer_contact' => ['footer', 'Footer: əlaqənin başlığı', 'Подвал: заголовок контактов', 'line'],
+    'footer_rights' => ['footer', 'Footer: «Bütün hüquqlar qorunur»', 'Подвал: «Все права защищены»', 'line'],
+    'footer_top' => ['footer', 'Footer: «Yuxarı» linki', 'Подвал: ссылка «Наверх»', 'line'],
+    'not_found_title' => ['footer', '404 səhifəsi: başlıq', 'Страница 404: заголовок', 'line'],
+    'not_found_text' => ['footer', '404 səhifəsi: mətn', 'Страница 404: текст', 'area'],
+    'not_found_home' => ['footer', '404 səhifəsi: düymə', 'Страница 404: кнопка', 'line'],
+];
+
+/**
+ * Site pages: fixed keys with an editable address, title (H1) and SEO. 'sections' are the blocks the page
  * shows (app/views/sections); the page text lives in the 'groups' of TEXT_FIELDS and in the
  * 'items' tables, and their translations make up the "Text" status in the admin.
  */
@@ -502,6 +579,30 @@ const SEED_PROJECTS = [
 /** [question, answer]; every text is ['az' => …, 'ru' => …, 'en' => …] */
 const SEED_FAQS = [
     [
+        ['az' => 'Restoran auditi nədir?', 'ru' => 'Что такое аудит ресторана?', 'en' => 'What is a restaurant audit?'],
+        [
+            'az' => 'Restoran auditi — restoranın maliyyəsinin, maya dəyərinin, anbarının, satınalmasının və daxili nəzarət sisteminin müstəqil yoxlanılmasıdır. Audit gizli itkiləri, artan xərcləri və sui-istifadə risklərini üzə çıxarır, nəticədə isə konkret təkmilləşdirmə planı hazırlanır.',
+            'ru' => 'Аудит ресторана — это независимая проверка финансов, себестоимости, склада, закупок и системы внутреннего контроля заведения. Он показывает скрытые потери, рост затрат и риски злоупотреблений, а по итогам готовится конкретный план улучшений.',
+            'en' => 'A restaurant audit is an independent review of a venue’s finances, food costs, stock, purchasing and internal controls. It reveals hidden losses, rising costs and the risk of misconduct, and ends with a concrete improvement plan.',
+        ],
+    ],
+    [
+        ['az' => 'Restoran auditi zamanı nələri yoxlayırsınız?', 'ru' => 'Что вы проверяете при аудите ресторана?', 'en' => 'What do you check during a restaurant audit?'],
+        [
+            'az' => 'P&L hesabatını və pul axınını, hər yeməyin maya dəyərini (food cost) və texnoloji kartları, anbar qalıqlarını və sayımları, təchizatçı qiymətlərini, əməkhaqqı fondunu, həmçinin səlahiyyət bölgüsünü və gündəlik əməliyyatlara nəzarəti.',
+            'ru' => 'P&L и денежный поток, себестоимость (фудкост) каждого блюда и технологические карты, складские остатки и инвентаризацию, цены поставщиков, фонд оплаты труда, а также распределение полномочий и контроль ежедневных операций.',
+            'en' => 'The P&L and cash flow, the food cost of every dish and its recipe card, stock balances and counts, supplier prices, payroll, and the division of responsibilities and control of daily operations.',
+        ],
+    ],
+    [
+        ['az' => 'Restoran auditi kimə lazımdır?', 'ru' => 'Кому нужен аудит ресторана?', 'en' => 'Who needs a restaurant audit?'],
+        [
+            'az' => 'Gəliri artsa da mənfəəti azalan, maya dəyəri yüksələn, anbarında kəsir və ya artıq qalıq yaranan restoran, kafe və otellərə, həmçinin açılışa hazırlaşan yeni obyektlərə.',
+            'ru' => 'Ресторанам, кафе и отелям, где при росте выручки падает прибыль, растёт себестоимость или на складе появляются недостачи и излишки, а также новым заведениям перед открытием.',
+            'en' => 'Restaurants, cafés and hotels whose profit falls even as revenue grows, whose food costs keep rising or whose stock shows shortages and surpluses — and new venues getting ready to open.',
+        ],
+    ],
+    [
         ['az' => 'Hansı müəssisələrlə işləyirsiniz?', 'ru' => 'С какими заведениями вы работаете?', 'en' => 'What kinds of businesses do you work with?'],
         [
             'az' => 'İaşə və restoran sektorunun kiçik və orta ölçülü müəssisələri ilə — restoran, kafe, lounge və otel brendləri. Həm sıfırdan qurulan yeni obyektlərə, həm də fəaliyyətdə olan restoranlara xidmət göstəririk.',
@@ -543,72 +644,143 @@ const SEED_FAQS = [
     ],
 ];
 
-/** key => [menu name, SEO title, SEO description]; every text is ['az' => …, 'ru' => …, 'en' => …] */
+/**
+ * key => [menu name, SEO title, SEO description, page title (H1), meta keywords];
+ * every text is ['az' => …, 'ru' => …, 'en' => …]. The home page takes its H1 from the hero texts.
+ */
 const SEED_PAGES = [
     'home' => [
         ['az' => 'Ana səhifə', 'ru' => 'Главная', 'en' => 'Home'],
         [
-            'az' => 'Restoranlar üçün xərclərə nəzarət — Cost Control Services',
-            'ru' => 'Контроль затрат для ресторанов — Cost Control Services',
-            'en' => 'Cost control for restaurants — Cost Control Services',
+            'az' => 'Restoran auditi Bakıda — xərclərə nəzarət | Cost Control',
+            'ru' => 'Аудит ресторана в Баку — контроль затрат | Cost Control',
+            'en' => 'Restaurant audit in Baku — cost control | Cost Control',
         ],
         [
-            'az' => 'Restoran və iaşə biznesi üçün xərclərə nəzarət: maliyyə və P&L, maya dəyəri, texnoloji kartlar, satınalma, inventar və daxili nəzarət. Bakı.',
-            'ru' => 'Контроль затрат для ресторанов и общепита: финансы и P&L, себестоимость, технологические карты, закупки, инвентаризация и внутренний контроль. Баку.',
-            'en' => 'Cost control for restaurants and food service: finance and P&L, food costing, recipe cards, purchasing, inventory and internal control. Baku.',
+            'az' => 'Restoran auditi və xərclərə nəzarət: maya dəyəri (food cost), texnoloji kartlar, anbar sayımı, P&L və daxili nəzarət. Bakı, 2021-ci ildən, 18 brend.',
+            'ru' => 'Аудит ресторана и контроль затрат: себестоимость и фудкост, технологические карты, инвентаризация, P&L и внутренний контроль. Баку, с 2021 года.',
+            'en' => 'Restaurant audit and cost control: food cost, recipe cards, stock counts, P&L and internal control. Baku, since 2021, 18 partner brands.',
+        ],
+        ['az' => '', 'ru' => '', 'en' => ''],
+        [
+            'az' => 'restoran auditi, restoran auditi Bakı, restoranların auditi, xərclərə nəzarət, maya dəyəri, food cost, texnoloji kart, anbar sayımı, restoran konsaltinqi',
+            'ru' => 'аудит ресторана, аудит ресторана Баку, аудит ресторанов, контроль затрат ресторана, себестоимость блюд, фудкост, технологические карты, инвентаризация, ресторанный консалтинг',
+            'en' => 'restaurant audit, restaurant audit Baku, restaurant cost control, food cost, recipe cards, stock count, restaurant consulting Baku',
         ],
     ],
     'about' => [
         ['az' => 'Haqqımızda', 'ru' => 'О нас', 'en' => 'About us'],
-        ['az' => 'Haqqımızda — Cost Control Services', 'ru' => 'О компании — Cost Control Services', 'en' => 'About us — Cost Control Services'],
         [
-            'az' => 'Cost Control 2021-ci ildən iaşə və restoran sektorunda xərclərə nəzarət, maya dəyəri və maliyyə şəffaflığı üzrə peşəkar xidmət göstərir.',
-            'ru' => 'С 2021 года Cost Control помогает ресторанам и заведениям общепита контролировать затраты, себестоимость и финансы.',
-            'en' => 'Since 2021, Cost Control has provided professional cost control, food costing and financial transparency services to restaurants and food service businesses.',
+            'az' => 'Haqqımızda — restoran auditi komandası | Cost Control',
+            'ru' => 'О компании — аудит ресторанов в Баку | Cost Control',
+            'en' => 'About us — restaurant audit team in Baku | Cost Control',
+        ],
+        [
+            'az' => 'Cost Control 2021-ci ildən Bakıda restoran auditi və xərclərə nəzarət aparır: böyük şəbəkələrin standartlarını kiçik və orta restoranlara uyğunlaşdırırıq.',
+            'ru' => 'С 2021 года Cost Control проводит аудит ресторанов и контроль затрат в Баку: адаптируем стандарты крупных сетей для небольших и средних заведений.',
+            'en' => 'Since 2021, Cost Control has run restaurant audits and cost control in Baku, adapting the standards of large chains to small and mid-sized venues.',
+        ],
+        [
+            'az' => 'Cost Control — Bakıda restoran auditi komandası',
+            'ru' => 'Cost Control — команда аудита ресторанов в Баку',
+            'en' => 'Cost Control — a restaurant audit team in Baku',
+        ],
+        [
+            'az' => 'restoran auditi, Cost Control, restoran konsaltinqi Bakı, xərclərə nəzarət, iaşə sektoru',
+            'ru' => 'аудит ресторанов, Cost Control, ресторанный консалтинг Баку, контроль затрат, общепит',
+            'en' => 'restaurant audit, Cost Control, restaurant consulting Baku, cost control, food service',
         ],
     ],
     'services' => [
         ['az' => 'Xidmətlər', 'ru' => 'Услуги', 'en' => 'Services'],
         [
-            'az' => 'Xərclərə nəzarət xidmətləri — Cost Control Services',
-            'ru' => 'Услуги по контролю затрат — Cost Control Services',
-            'en' => 'Cost control services — Cost Control Services',
+            'az' => 'Restoran auditi xidmətləri: maya dəyəri, inventar, P&L',
+            'ru' => 'Услуги аудита ресторана: фудкост, инвентаризация, P&L',
+            'en' => 'Restaurant audit services: food cost, inventory, P&L',
         ],
         [
-            'az' => 'Maliyyə və P&L, xərc analizi, xərclərin optimallaşdırılması, maya dəyəri və texnoloji kartlar, satınalma, inventar və daxili nəzarət — restoranlar üçün.',
-            'ru' => 'Финансы и P&L, анализ и оптимизация затрат, себестоимость и технологические карты, закупки, инвентаризация и внутренний контроль — для ресторанов.',
-            'en' => 'Finance and P&L, cost analysis and optimization, food costing and recipe cards, purchasing, inventory and internal control — for restaurants.',
+            'az' => 'Restoran auditi altı istiqamətdə: maliyyə və P&L, xərc analizi və optimallaşdırma, maya dəyəri və texnoloji kartlar, satınalma, inventar və daxili nəzarət.',
+            'ru' => 'Аудит ресторана по шести направлениям: финансы и P&L, анализ и оптимизация затрат, себестоимость и техкарты, закупки, инвентаризация, внутренний контроль.',
+            'en' => 'Restaurant audit in six areas: finance and P&L, cost analysis and optimization, food costing and recipe cards, purchasing, inventory and internal control.',
+        ],
+        [
+            'az' => 'Restoran auditi və xərclərə nəzarət xidmətləri',
+            'ru' => 'Услуги по аудиту ресторана и контролю затрат',
+            'en' => 'Restaurant audit and cost control services',
+        ],
+        [
+            'az' => 'restoran auditi xidmətləri, maya dəyərinin hesablanması, food cost, texnoloji kartların hazırlanması, anbar inventarizasiyası, P&L hesabatı, daxili nəzarət',
+            'ru' => 'услуги аудита ресторана, расчёт себестоимости блюд, фудкост, разработка технологических карт, инвентаризация в ресторане, P&L ресторана, внутренний контроль',
+            'en' => 'restaurant audit services, food cost calculation, recipe cards, restaurant inventory, restaurant P&L, internal control',
         ],
     ],
     'clients' => [
         ['az' => 'Müştərilər', 'ru' => 'Клиенты', 'en' => 'Clients'],
-        ['az' => 'Müştərilərimiz — Cost Control Services', 'ru' => 'Наши клиенты — Cost Control Services', 'en' => 'Our clients — Cost Control Services'],
         [
-            'az' => 'Restoran, kafe, lounge və otel brendləri: Cost Control Services ilə əməkdaşlıq edən şirkətlər.',
-            'ru' => 'Рестораны, кафе, лаунжи и отели, которые работают с Cost Control Services.',
-            'en' => 'Restaurants, cafés, lounges and hotels that work with Cost Control Services.',
+            'az' => 'Müştərilərimiz — restoran, kafe və otellər | Cost Control',
+            'ru' => 'Наши клиенты — рестораны, кафе и отели | Cost Control',
+            'en' => 'Our clients — restaurants, cafés and hotels | Cost Control',
+        ],
+        [
+            'az' => 'Restoran auditi və xərclərə nəzarət üzrə əməkdaşlıq etdiyimiz 18 brend: Bakıda restoran, kafe, lounge və otellər.',
+            'ru' => '18 брендов, с которыми мы работаем по аудиту ресторана и контролю затрат: рестораны, кафе, лаунжи и отели Баку.',
+            'en' => '18 brands we have worked with on restaurant audits and cost control: restaurants, cafés, lounges and hotels in Baku.',
+        ],
+        [
+            'az' => 'Müştərilərimiz: restoranlar, kafelər və otellər',
+            'ru' => 'Наши клиенты: рестораны, кафе и отели',
+            'en' => 'Our clients: restaurants, cafés and hotels',
+        ],
+        [
+            'az' => 'restoran auditi, Bakı restoranları, kafe auditi, otel restoranının auditi',
+            'ru' => 'аудит ресторана, рестораны Баку, аудит кафе, аудит ресторана отеля',
+            'en' => 'restaurant audit, Baku restaurants, café audit, hotel restaurant audit',
         ],
     ],
     'faq' => [
         ['az' => 'Suallar', 'ru' => 'Вопросы', 'en' => 'FAQ'],
         [
-            'az' => 'Tez-tez verilən suallar — Cost Control Services',
-            'ru' => 'Частые вопросы — Cost Control Services',
-            'en' => 'FAQ — Cost Control Services',
+            'az' => 'Restoran auditi haqqında suallar və cavablar | Cost Control',
+            'ru' => 'Аудит ресторана: вопросы и ответы | Cost Control',
+            'en' => 'Restaurant audit: questions and answers | Cost Control',
         ],
         [
-            'az' => 'Restoranlar üçün xərclərə nəzarət xidmətləri haqqında suallar və cavablar: kimlərlə işləyirik, hansı xidmətləri göstəririk, necə əlaqə saxlamaq olar.',
-            'ru' => 'Ответы на вопросы о контроле затрат для ресторанов: с кем мы работаем, какие услуги оказываем и как с нами связаться.',
-            'en' => 'Answers about cost control for restaurants: who we work with, what services we offer and how to get in touch.',
+            'az' => 'Restoran auditi nədir, nələri yoxlayırıq, kimə lazımdır və necə müraciət etmək olar — xərclərə nəzarət haqqında tez-tez verilən suallar.',
+            'ru' => 'Что такое аудит ресторана, что мы проверяем, кому он нужен и как оставить заявку — частые вопросы о контроле затрат.',
+            'en' => 'What a restaurant audit is, what we check, who needs one and how to get in touch — frequently asked questions about cost control.',
+        ],
+        [
+            'az' => 'Restoran auditi haqqında suallar',
+            'ru' => 'Вопросы об аудите ресторана',
+            'en' => 'Restaurant audit FAQ',
+        ],
+        [
+            'az' => 'restoran auditi nədir, restoran auditi necə aparılır, restoranın yoxlanılması, xərclərə nəzarət',
+            'ru' => 'что такое аудит ресторана, как проводится аудит ресторана, проверка ресторана, контроль затрат',
+            'en' => 'what is a restaurant audit, how a restaurant audit works, restaurant inspection, cost control',
         ],
     ],
     'contact' => [
         ['az' => 'Əlaqə', 'ru' => 'Контакты', 'en' => 'Contact'],
-        ['az' => 'Əlaqə — Cost Control Services, Bakı', 'ru' => 'Контакты — Cost Control Services, Баку', 'en' => 'Contact — Cost Control Services, Baku'],
         [
-            'az' => 'Cost Control Services ilə əlaqə: +994 55 855 61 52, WhatsApp və müraciət forması. Bakı, Nizami rayonu, Heydər Əliyev prospekti 5.',
-            'ru' => 'Свяжитесь с Cost Control Services: +994 55 855 61 52, WhatsApp и форма заявки. Баку, Низаминский район, проспект Гейдара Алиева, 5.',
-            'en' => 'Contact Cost Control Services: +994 55 855 61 52, WhatsApp and request form. 5 Heydar Aliyev Avenue, Nizami district, Baku.',
+            'az' => 'Əlaqə — restoran auditi sifariş edin | Cost Control, Bakı',
+            'ru' => 'Контакты — заказать аудит ресторана в Баку | Cost Control',
+            'en' => 'Contact — order a restaurant audit in Baku | Cost Control',
+        ],
+        [
+            'az' => 'Restoran auditi sifariş etmək üçün: +994 55 855 61 52, WhatsApp və ya sayt forması. Bakı, Nizami rayonu, Heydər Əliyev prospekti 5.',
+            'ru' => 'Заказать аудит ресторана: +994 55 855 61 52, WhatsApp или форма на сайте. Баку, Низаминский район, проспект Гейдара Алиева, 5.',
+            'en' => 'Order a restaurant audit: +994 55 855 61 52, WhatsApp or the form on this site. 5 Heydar Aliyev Avenue, Nizami district, Baku.',
+        ],
+        [
+            'az' => 'Restoran auditi sifariş edin',
+            'ru' => 'Заказать аудит ресторана',
+            'en' => 'Order a restaurant audit',
+        ],
+        [
+            'az' => 'restoran auditi sifarişi, restoran auditi Bakı, Cost Control əlaqə',
+            'ru' => 'заказать аудит ресторана, аудит ресторана Баку, Cost Control контакты',
+            'en' => 'order a restaurant audit, restaurant audit Baku, Cost Control contact',
         ],
     ],
 ];

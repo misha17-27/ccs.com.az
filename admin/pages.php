@@ -157,8 +157,11 @@ if (is_post()) {
     $slug = $key === 'home' ? '' : strtolower(trim(post_str('slug', 80), " /"));
     $values = [
         'name' => post_ml('name', 80),
+        'h1' => post_ml('h1', 160),
+        'lead' => post_ml('lead', 600),
         'seo_title' => post_ml('seo_title', 200),
         'seo_description' => post_ml('seo_description', 400),
+        'keywords' => post_ml('keywords', 400),
     ];
 
     $errors = [];
@@ -251,10 +254,23 @@ if ($key !== '') {
           <?= ml_field('name', t('pages.name'), row_ml($page, 'name'), 'line', true) ?>
         </section>
         <section class="card stack">
+          <div class="card__head"><h2><?= e(t('pages.heading')) ?></h2></div>
+          <?php if ($key === 'home'): ?>
+            <p class="muted small"><?= e(t('pages.home_h1')) ?> <a class="inline-link" href="<?= ADMIN_URL ?>/texts.php?g=hero"><?= e(tl(TEXT_GROUPS['hero'])) ?></a></p>
+          <?php else: ?>
+            <?= ml_field('h1', t('pages.h1'), row_ml($page, 'h1'), 'line', false, 70) ?>
+            <small class="hint"><?= e(t('pages.h1_hint')) ?></small>
+            <?= ml_field('lead', t('pages.lead'), row_ml($page, 'lead'), 'area') ?>
+            <small class="hint"><?= e(t('pages.lead_hint')) ?></small>
+          <?php endif; ?>
+        </section>
+        <section class="card stack">
           <div class="card__head"><h2>SEO</h2></div>
           <p class="muted small"><?= e(t('seo.hint')) ?></p>
           <?= ml_field('seo_title', t('pages.seo_title'), row_ml($page, 'seo_title'), 'line', false, 60) ?>
           <?= ml_field('seo_description', t('pages.seo_description'), row_ml($page, 'seo_description'), 'area', false, 160) ?>
+          <?= ml_field('keywords', t('pages.keywords'), row_ml($page, 'keywords'), 'area') ?>
+          <small class="hint"><?= e(t('pages.keywords_hint')) ?></small>
           <div class="serp" data-serp>
             <p class="serp__label"><?= e(t('pages.serp')) ?></p>
             <div class="serp__url"><?= e($host) ?><span data-serp-path><?= $page['slug'] !== '' ? ' › ' . e($page['slug']) : '' ?></span></div>

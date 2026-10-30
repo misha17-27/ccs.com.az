@@ -13,6 +13,18 @@ if (!isset(TEXT_GROUPS[$group])) {
 }
 $fields = array_filter(TEXT_FIELDS, static fn($def) => $def[0] === $group);
 
+// Interface strings of the group (UI_FIELDS): their defaults come from app/site_lang, and only a changed value is saved
+$uiDefaults = [];
+foreach (array_keys(CONTENT_LANGS) as $lang) {
+    $uiDefaults[$lang] = require BASE_PATH . "/app/site_lang/{$lang}.php";
+}
+foreach (UI_FIELDS as $key => [$g, $labelAz, $labelRu, $type]) {
+    if ($g === $group) {
+        $fields['ui.' . $key] = [$g, $labelAz, $labelRu, $type, array_map(static fn($dict) => $dict[$key] ?? '', $uiDefaults)];
+    }
+}
+$isUi = static fn(string $key): bool => str_starts_with($key, 'ui.');
+
 if (is_post()) {
     csrf_check();
     $posted = $_POST['t'] ?? [];
@@ -21,6 +33,11 @@ if (is_post()) {
     $db->beginTransaction();
     foreach ($fields as $key => $def) {
         $value = ml_clean(is_array($posted) ? ($posted[$key] ?? []) : [], $def[3] === 'area' ? 5000 : 500);
+        if ($isUi($key)) {
+            foreach ($value as $lang => $v) {
+                $value[$lang] = $v === $def[4][$lang] ? '' : $v;
+            }
+        }
         $args = [$value['az'], $value['ru'], $value['en'], now(), $key];
         $update->execute($args);
         if ($update->rowCount() === 0) {
@@ -56,8 +73,15 @@ admin_header(t('nav.texts'), $group === 'about' ? 'about' : 'texts', $user);
     </div>
   </div>
   <p class="muted small"><?= e(t('texts.format_hint')) ?></p>
-  <?php foreach ($fields as $key => [$g, $labelAz, $labelRu, $type]): ?>
-    <?= ml_field("t[{$key}]", admin_lang() === 'ru' ? $labelRu : $labelAz, row_ml($rows[$key] ?? [], 'value'), $type, true) ?>
+  <?php foreach ($fields as $key => [$g, $labelAz, $labelRu, $type, $default]):
+      $values = row_ml($rows[$key] ?? [], 'value');
+      if ($isUi($key)) {
+          foreach ($values as $lang => $v) {
+              $values[$lang] = $v !== '' ? $v : $default[$lang];
+          }
+      }
+      ?>
+    <?= ml_field("t[{$key}]", admin_lang() === 'ru' ? $labelRu : $labelAz, $values, $type, true) ?>
   <?php endforeach; ?>
   <div class="form-actions"><button class="btn btn--dark" type="submit"><?= icon('check') ?><?= e(t('save')) ?></button></div>
 </form>

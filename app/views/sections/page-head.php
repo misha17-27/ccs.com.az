@@ -1,5 +1,5 @@
 <?php
-/** Top band of an inner page: breadcrumb, page name (h1) and its SEO description as the lead. @var string $name @var string $lead */
+/** Top band of an inner page: breadcrumb with the menu name, the page title (h1) and the text under it. @var string $name @var string $title @var string $lead */
 defined('CCS') || exit;
 ?>
 <!-- SECTION: page-head -->
@@ -11,7 +11,7 @@ defined('CCS') || exit;
       <span aria-hidden="true">/</span>
       <span aria-current="page"><?= e($name) ?></span>
     </nav>
-    <h1 class="page-head__title" data-reveal style="--delay:.06s"><?= e($name) ?></h1>
+    <h1 class="page-head__title" data-reveal style="--delay:.06s"><?= rich($title) ?></h1>
     <?php if ($lead !== ''): ?><p class="page-head__lead" data-reveal style="--delay:.12s"><?= e($lead) ?></p><?php endif; ?>
   </div>
 </section>

@@ -4,6 +4,9 @@ defined('CCS') || exit;
 
 return [
     'locale' => 'ru_RU',
+    // structured data (schema.org) of the company
+    'city' => 'Баку',
+    'country' => 'Азербайджан',
     'skip' => 'Перейти к содержимому',
     'brand_home' => 'Cost Control Services — главная',
     'nav_label' => 'Главное меню',

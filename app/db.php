@@ -8,7 +8,7 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 function db(): PDO
 {
@@ -54,6 +54,10 @@ function migrate(PDO $pdo): void
         if ($version < 5) {
             create_schema_v5($pdo);
             seed_projects($pdo);
+        }
+        if ($version < 6) {
+            create_schema_v6($pdo);
+            refresh_audit_content($pdo);
         }
         $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
         $pdo->commit();
@@ -392,4 +396,70 @@ function seed_projects(PDO $pdo): void
         }
     }
     $pdo->exec("DELETE FROM texts WHERE key IN ('experience.tag1', 'experience.p1', 'experience.tag2', 'experience.p2')");
+}
+
+/** v6: a page gets its own title (H1), text under the title and meta keywords. */
+function create_schema_v6(PDO $pdo): void
+{
+    foreach (['h1', 'lead', 'keywords'] as $col) {
+        foreach (array_keys(CONTENT_LANGS) as $lang) {
+            $pdo->exec("ALTER TABLE pages ADD COLUMN {$col}_{$lang} TEXT");
+        }
+    }
+}
+
+/**
+ * v6: texts and page SEO aimed at "restaurant audit". A value that still equals its v5 default (seed_v5.php)
+ * takes the new default, each language on its own; edited values are kept. Pages get their H1 and keywords,
+ * and the FAQ gets the questions about the audit.
+ */
+function refresh_audit_content(PDO $pdo): void
+{
+    $old = require __DIR__ . '/seed_v5.php';
+    $t = now();
+    $merge = static function (array $row, string $col, array $new, array $oldValues): array {
+        return array_map(static function (string $lang) use ($row, $col, $new, $oldValues) {
+            $value = (string)($row["{$col}_{$lang}"] ?? '');
+            return $value === $oldValues[$lang] ? $new[$lang] : $value;
+        }, array_keys(CONTENT_LANGS));
+    };
+
+    $find = $pdo->prepare('SELECT * FROM texts WHERE key = ?');
+    $update = $pdo->prepare('UPDATE texts SET value_az = ?, value_ru = ?, value_en = ?, updated_at = ? WHERE key = ?');
+    foreach ($old['texts'] as $key => $oldValues) {
+        $find->execute([$key]);
+        if ($row = $find->fetch()) {
+            $update->execute([...$merge($row, 'value', TEXT_FIELDS[$key][4], $oldValues), $t, $key]);
+        }
+    }
+
+    $pages = $pdo->prepare('SELECT * FROM pages WHERE key = ?');
+    $updatePage = $pdo->prepare('UPDATE pages SET seo_title_az = ?, seo_title_ru = ?, seo_title_en = ?,
+        seo_description_az = ?, seo_description_ru = ?, seo_description_en = ?,
+        h1_az = ?, h1_ru = ?, h1_en = ?, keywords_az = ?, keywords_ru = ?, keywords_en = ?, updated_at = ? WHERE key = ?');
+    foreach (SEED_PAGES as $key => [, $title, $description, $h1, $keywords]) {
+        $pages->execute([$key]);
+        if (!$page = $pages->fetch()) {
+            continue;
+        }
+        [$oldTitle, $oldDescription] = $old['pages'][$key];
+        $updatePage->execute([
+            ...$merge($page, 'seo_title', $title, $oldTitle),
+            ...$merge($page, 'seo_description', $description, $oldDescription),
+            ...ml_values($h1), ...ml_values($keywords), $t, $key,
+        ]);
+    }
+
+    // New seed questions go first, before the questions the site already has.
+    $new = array_values(array_filter(SEED_FAQS, static fn($faq) => !in_array($faq[0]['az'], $old['faqs'], true)));
+    $exists = $pdo->prepare('SELECT 1 FROM faqs WHERE question_az = ?');
+    $faq = $pdo->prepare('INSERT INTO faqs (sort, question_az, question_ru, question_en, answer_az, answer_ru, answer_en, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $first = (int)$pdo->query('SELECT MIN(sort) FROM faqs')->fetchColumn();
+    foreach ($new as $i => [$question, $answer]) {
+        $exists->execute([$question['az']]);
+        if (!$exists->fetchColumn()) {
+            $faq->execute([$first - count($new) + $i, ...ml_values($question), ...ml_values($answer), $t, $t]);
+        }
+    }
 }

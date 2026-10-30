@@ -9,6 +9,9 @@ defined('CCS') || exit;
 
 const SITE_NAME = 'Cost Control Services';
 
+/** Share image (og:image) for pages without their own one and without one on the home page (Admin → Pages). */
+const DEFAULT_OG_IMAGE = '/assets/img/og-image.jpg';
+
 /** Service images that ship with the site: [panel background, extra image style] (see .svc__media in site.css). */
 const SERVICE_MEDIA = [
     '/assets/img/render/wallet.jpg' => ['dark', 'object-position:50% 85%'],
@@ -28,21 +31,25 @@ function site_lang(?string $set = null): string
     return $lang;
 }
 
-/** Interface string of the public site (app/site_lang/{lang}.php). */
+/**
+ * Interface string of the public site (app/site_lang/{lang}.php). Strings listed in UI_FIELDS can be
+ * changed in Admin → Texts; an empty value there keeps the default of that language.
+ */
 function ui(string $key, array $vars = []): string
 {
     static $dict = [];
     $lang = site_lang();
     $dict[$lang] ??= require __DIR__ . "/site_lang/{$lang}.php";
-    $text = $dict[$lang][$key] ?? $key;
+    $custom = isset(UI_FIELDS[$key]) ? trim((string)(text_rows()['ui.' . $key]['value_' . $lang] ?? '')) : '';
+    $text = $custom !== '' ? $custom : ($dict[$lang][$key] ?? $key);
     foreach ($vars as $name => $value) {
         $text = str_replace('{' . $name . '}', (string)$value, $text);
     }
     return $text;
 }
 
-/** Site text from Admin → Texts in the current language; an empty translation falls back to AZ. */
-function txt(string $key): string
+/** Rows of Admin → Texts by key. */
+function text_rows(): array
 {
     static $rows = null;
     if ($rows === null) {
@@ -51,6 +58,13 @@ function txt(string $key): string
             $rows[$row['key']] = $row;
         }
     }
+    return $rows;
+}
+
+/** Site text from Admin → Texts in the current language; an empty translation falls back to AZ. */
+function txt(string $key): string
+{
+    $rows = text_rows();
     if (!isset($rows[$key])) {
         return TEXT_FIELDS[$key][4][site_lang()] ?? '';
     }
@@ -226,6 +240,76 @@ function tiktok_handle(): string
     $path = trim((string)parse_url(tiktok_url(), PHP_URL_PATH), '/');
     $first = explode('/', $path)[0];
     return preg_match('/^@[\w.]+$/', $first) ? $first : '@costcontrol.services';
+}
+
+// ---------- Structured data ----------
+
+/**
+ * schema.org data of a page (JSON-LD): the company with its services on every page, the website on the
+ * home page, breadcrumbs on inner pages and the questions on pages with the FAQ block.
+ */
+function site_schema(string $pageKey): array
+{
+    $origin = site_origin();
+    $pages = site_pages();
+    $home = $pages['home'];
+    $company = $origin . '/#company';
+
+    $org = [
+        '@type' => 'ProfessionalService',
+        '@id' => $company,
+        'name' => SITE_NAME,
+        'alternateName' => 'Cost Control',
+        'url' => $origin . url('home'),
+        'logo' => $origin . '/assets/img/logo-mark.svg',
+        'description' => pick($home, 'seo_description'),
+        'telephone' => '+' . preg_replace('/\D+/', '', phone_display()),
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => txt('contact.address'),
+            'addressLocality' => ui('city'),
+            'addressCountry' => 'AZ',
+        ],
+        'areaServed' => ['@type' => 'Country', 'name' => ui('country')],
+        'foundingDate' => '2021',
+        'knowsAbout' => array_values(array_filter(array_map('trim', explode(',', pick($home, 'keywords'))), 'strlen')),
+        'sameAs' => [instagram_url(), tiktok_url()],
+        'hasOfferCatalog' => [
+            '@type' => 'OfferCatalog',
+            'name' => plain(pick($pages['services'], 'h1') ?: pick($pages['services'], 'name')),
+            'itemListElement' => array_map(static fn(array $service) => [
+                '@type' => 'Offer',
+                'itemOffered' => ['@type' => 'Service', 'name' => pick($service, 'title'), 'description' => plain(pick($service, 'lead'))],
+            ], site_services()),
+        ],
+    ];
+    if (setting('contact_email') !== '') {
+        $org['email'] = setting('contact_email');
+    }
+    if (!empty($home['og_image'])) {
+        $org['image'] = $origin . $home['og_image'];
+    }
+    $graph = [$org];
+
+    if ($pageKey === 'home') {
+        $graph[] = ['@type' => 'WebSite', '@id' => $origin . '/#website', 'name' => SITE_NAME, 'url' => $origin . url('home'),
+            'inLanguage' => site_lang(), 'publisher' => ['@id' => $company]];
+    } elseif (isset($pages[$pageKey])) {
+        $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => pick($home, 'name'), 'item' => $origin . url('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => pick($pages[$pageKey], 'name'), 'item' => $origin . url($pageKey)],
+        ]];
+    }
+
+    $faqs = in_array('faq', PAGES[$pageKey]['sections'] ?? [], true) ? site_faqs() : [];
+    if ($faqs) {
+        $graph[] = ['@type' => 'FAQPage', 'mainEntity' => array_map(static fn(array $faq) => [
+            '@type' => 'Question',
+            'name' => plain(pick($faq, 'question')),
+            'acceptedAnswer' => ['@type' => 'Answer', 'text' => plain(pick($faq, 'answer'))],
+        ], $faqs)];
+    }
+    return ['@context' => 'https://schema.org', '@graph' => $graph];
 }
 
 /** Renders app/views/sections/{$section}.php with $vars as its variables. */

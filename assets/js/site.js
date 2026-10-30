@@ -127,6 +127,20 @@
       if (e.matches && !tabs.some((t) => t.getAttribute('aria-expanded') === 'true')) activate(tabs[0]);
     });
 
+    // Images of hidden panels wait for their tab, so they are fetched as the block comes near
+    // the screen: a click then shows the picture at once.
+    const loadImages = () => svc.querySelectorAll('[data-svc-img]').forEach((img) => { img.loading = 'eager'; });
+    if (hasIO) {
+      new IntersectionObserver((entries, obs) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          loadImages();
+          obs.disconnect();
+        }
+      }, { rootMargin: '600px 0px' }).observe(svc);
+    } else {
+      loadImages();
+    }
+
     // footer links (/xidmetler#svc-tab-3) open that service
     const fromHash = () => {
       const tab = tabs.find((t) => '#' + t.id === window.location.hash);

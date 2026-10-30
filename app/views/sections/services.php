@@ -38,8 +38,12 @@ $services = site_services();
             <?php endif; ?>
             <a class="link-arrow" href="#elaqe" data-service="<?= e($service['title_az']) ?>"><?= e(ui('svc_apply')) ?> <svg class="icon"><use href="#i-arrow"/></svg></a>
           </div>
-          <?php if ($service['image']): ?>
-            <figure class="svc__media svc__media--<?= e($media) ?>"><img src="<?= e(site_asset($service['image'])) ?>" alt="<?= e($title) ?>" loading="lazy"<?= img_size_attrs($service['image']) ?><?= $imgStyle ? ' style="' . e($imgStyle) . '"' : '' ?>></figure>
+          <?php if ($service['image']):
+              // a lighter WebP copy next to the image is used where the browser supports it
+              $webp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $service['image']);
+              $hasWebp = $webp !== $service['image'] && is_file(BASE_PATH . $webp);
+              ?>
+            <figure class="svc__media svc__media--<?= e($media) ?>"><?php if ($hasWebp): ?><picture><source srcset="<?= e(site_asset($webp)) ?>" type="image/webp"><?php endif; ?><img src="<?= e(site_asset($service['image'])) ?>" alt="<?= e($title) ?>" loading="lazy" decoding="async" data-svc-img<?= img_size_attrs($service['image']) ?><?= $imgStyle ? ' style="' . e($imgStyle) . '"' : '' ?>><?php if ($hasWebp): ?></picture><?php endif; ?></figure>
           <?php endif; ?>
         </div>
       <?php endforeach; ?>

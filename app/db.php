@@ -8,7 +8,7 @@
 declare(strict_types=1);
 defined('CCS') || exit;
 
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 8;
 
 function db(): PDO
 {
@@ -58,6 +58,13 @@ function migrate(PDO $pdo): void
         if ($version < 6) {
             create_schema_v6($pdo);
             refresh_audit_content($pdo);
+        }
+        if ($version < 7) {
+            create_schema_v7($pdo);
+        }
+        if ($version < 8) {
+            create_schema_v8($pdo);
+            seed_blog($pdo);
         }
         $pdo->exec('PRAGMA user_version = ' . SCHEMA_VERSION);
         $pdo->commit();
@@ -439,7 +446,8 @@ function refresh_audit_content(PDO $pdo): void
         h1_az = ?, h1_ru = ?, h1_en = ?, keywords_az = ?, keywords_ru = ?, keywords_en = ?, updated_at = ? WHERE key = ?');
     foreach (SEED_PAGES as $key => [, $title, $description, $h1, $keywords]) {
         $pages->execute([$key]);
-        if (!$page = $pages->fetch()) {
+        // pages added after v5 (the blog) get their H1 and keywords in a later step
+        if (!isset($old['pages'][$key]) || !$page = $pages->fetch()) {
             continue;
         }
         [$oldTitle, $oldDescription] = $old['pages'][$key];
@@ -462,4 +470,55 @@ function refresh_audit_content(PDO $pdo): void
             $faq->execute([$first - count($new) + $i, ...ml_values($question), ...ml_values($answer), $t, $t]);
         }
     }
+}
+
+/**
+ * v7: pages get their own address in RU and EN (/ru/o-nas, /en/about-us); the column slug stays the AZ address.
+ * Until now RU and EN used the AZ address; index.php redirects those links to the new ones.
+ */
+function create_schema_v7(PDO $pdo): void
+{
+    $langs = array_diff(array_keys(CONTENT_LANGS), ['az']);
+    foreach ($langs as $lang) {
+        $pdo->exec("ALTER TABLE pages ADD COLUMN slug_{$lang} TEXT");
+    }
+    $update = $pdo->prepare('UPDATE pages SET ' . implode(', ', array_map(static fn($l) => "slug_{$l} = ?", $langs)) . ' WHERE key = ?');
+    foreach (PAGES as $key => $def) {
+        $update->execute([...array_map(static fn($l) => $def["slug_{$l}"], $langs), $key]);
+    }
+}
+
+/** v8: blog posts (Admin → Blog), each with its own address per language like the pages. */
+function create_schema_v8(PDO $pdo): void
+{
+    $ml = 'ml_columns';
+    $slugs = implode(', ', array_map(static fn($l) => "slug_{$l} TEXT", array_diff(array_keys(CONTENT_LANGS), ['az'])));
+    $pdo->exec("CREATE TABLE posts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        slug TEXT NOT NULL UNIQUE,
+        {$slugs},
+        is_active INTEGER NOT NULL DEFAULT 1,
+        published_at TEXT NOT NULL,
+        cover TEXT,
+        {$ml('title', ' NOT NULL')},
+        {$ml('excerpt')},
+        {$ml('body')},
+        {$ml('seo_title')},
+        {$ml('seo_description')},
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL)");
+    $pdo->exec('CREATE INDEX idx_posts_published ON posts (is_active, published_at)');
+}
+
+/** The blog page, hidden from the site until Admin → Blog shows it. On a fresh install the page exists already. */
+function seed_blog(PDO $pdo): void
+{
+    $def = PAGES['blog'];
+    [$name, $title, $description, $h1, $keywords] = SEED_PAGES['blog'];
+    $pdo->prepare('INSERT OR IGNORE INTO pages (key, slug, slug_ru, slug_en, name_az, name_ru, name_en, seo_title_az, seo_title_ru, seo_title_en,
+        seo_description_az, seo_description_ru, seo_description_en, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        ->execute(['blog', $def['slug'], $def['slug_ru'], $def['slug_en'], ...ml_values($name), ...ml_values($title), ...ml_values($description), now()]);
+    $pdo->prepare("UPDATE pages SET h1_az = ?, h1_ru = ?, h1_en = ?, keywords_az = ?, keywords_ru = ?, keywords_en = ?
+        WHERE key = 'blog' AND COALESCE(h1_az, '') = ''")->execute([...ml_values($h1), ...ml_values($keywords)]);
+    $pdo->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('blog_visible', '0')");
 }

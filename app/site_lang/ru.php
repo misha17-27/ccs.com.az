@@ -50,6 +50,10 @@ return [
 
     'faq_ask' => 'Задать вопрос в WhatsApp',
 
+    'blog_read' => 'Читать статью',
+    'blog_back' => 'Все статьи',
+    'blog_empty' => 'Скоро здесь появятся статьи об аудите ресторанов и контроле затрат.',
+
     'contact_address' => 'Адрес',
     'contact_phone' => 'Телефон',
     'contact_whatsapp' => 'WhatsApp',

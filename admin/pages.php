@@ -19,6 +19,9 @@ const PAGE_ITEMS = [
     'projects' => ['nav.projects', 'projects.php', [
         ['SELECT * FROM projects WHERE is_active = 1', ['tag', 'text', 'caption']],
     ]],
+    'posts' => ['nav.blog', 'blog.php', [
+        ['SELECT * FROM posts WHERE is_active = 1', ['title', 'excerpt', 'body']],
+    ]],
 ];
 
 /** Per language [filled, total] for a set of values; optional values count only where the AZ text exists. */
@@ -32,6 +35,18 @@ function count_filled(array $counts, array $values, bool $required): array
         $counts[$lang][0] += trim((string)$values[$lang]) !== '' ? 1 : 0;
     }
     return $counts;
+}
+
+/** Address column of a language: slug is the AZ address, slug_ru and slug_en follow /ru/ and /en/. */
+function slug_col(string $lang): string
+{
+    return $lang === 'az' ? 'slug' : 'slug_' . $lang;
+}
+
+/** Path of a page in a language: /haqqimizda, /ru/o-nas … */
+function page_path(array $page, string $lang): string
+{
+    return '/' . ($lang === 'az' ? '' : $lang . '/') . ($page[slug_col($lang)] ?? '');
 }
 
 function empty_counts(): array
@@ -154,7 +169,10 @@ if (is_post()) {
         redirect($self);
     }
     $key = $page['key'];
-    $slug = $key === 'home' ? '' : strtolower(trim(post_str('slug', 80), " /"));
+    $slugs = [];
+    foreach (array_keys(CONTENT_LANGS) as $lang) {
+        $slugs[$lang] = $key === 'home' ? '' : strtolower(trim(post_str('slug_' . $lang, 80), " /"));
+    }
     $values = [
         'name' => post_ml('name', 80),
         'h1' => post_ml('h1', 160),
@@ -165,15 +183,18 @@ if (is_post()) {
     ];
 
     $errors = [];
-    if ($key !== 'home') {
-        $taken = $db->prepare('SELECT 1 FROM pages WHERE slug = ? AND key <> ?');
+    foreach ($key === 'home' ? [] : $slugs as $lang => $slug) {
+        // addresses are unique within a language: /ru/uslugi may repeat an AZ address, not another RU one
+        $col = slug_col($lang);
+        $taken = $db->prepare("SELECT 1 FROM pages WHERE {$col} = ? AND key <> ?");
         $taken->execute([$slug, $key]);
+        $shown = ltrim(page_path([$col => $slug], $lang), '/');
         if (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug) || strlen($slug) > 60) {
-            $errors[] = t('error.slug_invalid');
+            $errors[] = CONTENT_LANGS[$lang] . ': ' . t('error.slug_invalid');
         } elseif (in_array($slug, RESERVED_SLUGS, true)) {
-            $errors[] = t('error.slug_reserved', ['slug' => $slug]);
+            $errors[] = t('error.slug_reserved', ['slug' => $shown]);
         } elseif ($taken->fetchColumn()) {
-            $errors[] = t('error.slug_taken', ['slug' => $slug]);
+            $errors[] = t('error.slug_taken', ['slug' => $shown]);
         }
     }
     if ($values['name']['az'] === '') {
@@ -192,8 +213,12 @@ if (is_post()) {
             delete_upload($og);
             $og = $upload;
         }
-        $sets = ['slug = ?'];
-        $args = [$slug];
+        $sets = [];
+        $args = [];
+        foreach ($slugs as $lang => $slug) {
+            $sets[] = slug_col($lang) . ' = ?';
+            $args[] = $slug;
+        }
         foreach ($values as $col => $ml) {
             foreach ($ml as $lang => $value) {
                 $sets[] = "{$col}_{$lang} = ?";
@@ -211,7 +236,9 @@ if (is_post()) {
     foreach ($errors as $err) {
         flash('error', $err);
     }
-    $page['slug'] = $slug;
+    foreach ($slugs as $lang => $slug) {
+        $page[slug_col($lang)] = $slug;
+    }
     foreach ($values as $col => $ml) {
         foreach ($ml as $lang => $value) {
             $page["{$col}_{$lang}"] = $value;
@@ -239,15 +266,20 @@ if ($key !== '') {
         <section class="card stack">
           <div class="card__head"><h2><?= e(t('pages.main')) ?></h2></div>
           <div class="field">
-            <label class="label" for="slug"><?= e(t('pages.address')) ?><?= $key === 'home' ? '' : ' <span class="req">*</span>' ?></label>
-            <div class="affix">
-              <span class="affix__pre"><?= e($host) ?>/</span>
-              <?php if ($key === 'home'): ?>
-                <input id="slug" type="text" value="" disabled>
-              <?php else: ?>
-                <input id="slug" type="text" name="slug" value="<?= e($page['slug']) ?>" required maxlength="60"
-                  pattern="[a-z0-9]+(-[a-z0-9]+)*" spellcheck="false" autocapitalize="off" autocomplete="off" data-serp-slug>
-              <?php endif; ?>
+            <label class="label" for="slug-az"><?= e(t('pages.address')) ?><?= $key === 'home' ? '' : ' <span class="req">*</span>' ?></label>
+            <div class="affix-group">
+              <?php foreach (CONTENT_LANGS as $lang => $short): ?>
+                <div class="affix">
+                  <span class="affix__pre"><?= e($host . page_path([], $lang)) ?></span>
+                  <?php if ($key === 'home'): ?>
+                    <input id="slug-<?= $lang ?>" type="text" value="" disabled aria-label="<?= e(t('pages.address') . ' (' . $short . ')') ?>">
+                  <?php else: ?>
+                    <input id="slug-<?= $lang ?>" type="text" name="slug_<?= $lang ?>" value="<?= e($page[slug_col($lang)] ?? '') ?>" required maxlength="60"
+                      pattern="[a-z0-9]+(-[a-z0-9]+)*" spellcheck="false" autocapitalize="off" autocomplete="off" lang="<?= $lang ?>"
+                      aria-label="<?= e(t('pages.address') . ' (' . $short . ')') ?>"<?= $lang === 'az' ? ' data-serp-slug' : '' ?>>
+                  <?php endif; ?>
+                </div>
+              <?php endforeach; ?>
             </div>
             <small class="hint"><?= e(t($key === 'home' ? 'pages.home_slug' : 'pages.slug_hint')) ?></small>
           </div>
@@ -332,7 +364,7 @@ admin_header(t('nav.pages'), 'pages', $user);
               <a class="row-link" href="<?= $self ?>?key=<?= e($key) ?>"><?= e(tl($def)) ?></a>
               <span class="slug show-sm">/<?= e($row['slug']) ?></span>
             </td>
-            <td class="hide-sm"><span class="slug">/<?= e($row['slug']) ?></span></td>
+            <td class="hide-sm"><span class="slugs"><?php foreach (array_keys(CONTENT_LANGS) as $lang): ?><span class="slug"><?= e(page_path($row, $lang)) ?></span><?php endforeach; ?></span></td>
             <td><?= status_dot(sum_counts(page_sources($db, $key))) ?></td>
             <td><?= status_dot(seo_counts($row)) ?></td>
             <td class="actions">

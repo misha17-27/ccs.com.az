@@ -50,6 +50,10 @@ return [
 
     'faq_ask' => 'WhatsApp-da sual verin',
 
+    'blog_read' => 'Ətraflı oxu',
+    'blog_back' => 'Bütün məqalələr',
+    'blog_empty' => 'Tezliklə burada restoran auditi və xərclərə nəzarət haqqında məqalələr olacaq.',
+
     'contact_address' => 'Ünvan',
     'contact_phone' => 'Telefon',
     'contact_whatsapp' => 'WhatsApp',

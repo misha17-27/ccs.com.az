@@ -2,27 +2,40 @@
 /**
  * One page of the site (design V1): head with SEO, header, the page's sections, footer.
  * @var string $pageKey page key from PAGES, or '404'
+ * @var array|null $post the blog post on its own page (/bloq/<post>), with $pageKey 'blog'
  */
 
 declare(strict_types=1);
 defined('CCS') || exit;
 
+$post ??= null;
 $lang = site_lang();
 $pages = site_pages();
 $page = $pages[$pageKey] ?? null;
 $isHome = $pageKey === 'home';
 $name = $page ? pick($page, 'name') : ui('not_found_title');
-$title = $page ? (pick($page, 'seo_title') ?: $name . ' — ' . SITE_NAME) : ui('not_found_title') . ' — ' . SITE_NAME;
-$description = $page ? pick($page, 'seo_description') : '';
-$keywords = $page ? pick($page, 'keywords') : '';
-// Inner pages: the H1 and the text under it, falling back to the menu name and the SEO description
-$h1 = $page ? (pick($page, 'h1') ?: $name) : '';
-$lead = $page ? (pick($page, 'lead') ?: $description) : '';
-$ogImage = ($page['og_image'] ?? '') ?: ($pages['home']['og_image'] ?? '') ?: (is_file(BASE_PATH . DEFAULT_OG_IMAGE) ? DEFAULT_OG_IMAGE : '');
+if ($post) {
+    $title = pick($post, 'seo_title') ?: pick($post, 'title') . ' — ' . SITE_NAME;
+    $description = plain(pick($post, 'seo_description') ?: pick($post, 'excerpt'));
+    $keywords = '';
+    $h1 = pick($post, 'title');
+    $lead = plain(pick($post, 'excerpt'));
+} else {
+    $title = $page ? (pick($page, 'seo_title') ?: $name . ' — ' . SITE_NAME) : ui('not_found_title') . ' — ' . SITE_NAME;
+    $description = $page ? pick($page, 'seo_description') : '';
+    $keywords = $page ? pick($page, 'keywords') : '';
+    // Inner pages: the H1 and the text under it, falling back to the menu name and the SEO description
+    $h1 = $page ? (pick($page, 'h1') ?: $name) : '';
+    $lead = $page ? (pick($page, 'lead') ?: $description) : '';
+}
+$ogImage = ($post['cover'] ?? '') ?: ($page['og_image'] ?? '') ?: ($pages['home']['og_image'] ?? '') ?: (is_file(BASE_PATH . DEFAULT_OG_IMAGE) ? DEFAULT_OG_IMAGE : '');
 $origin = site_origin();
 $sections = $page ? PAGES[$pageKey]['sections'] : [];
-$navKeys = array_values(array_diff(array_keys($pages), ['home']));
-$langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
+// A hidden blog stays out of the menu and the footer, and search engines are asked not to index it
+$blogHidden = !blog_visible();
+$navKeys = array_values(array_diff(array_keys($pages), $blogHidden ? ['home', 'blog'] : ['home']));
+$noindex = !$page || ($pageKey === 'blog' && $blogHidden);
+$langUrl = static fn(string $l): string => $post ? post_url($post, $l) : url($page ? $pageKey : 'home', $l);
 ?><!doctype html>
 <html lang="<?= $lang ?>">
 <head>
@@ -35,17 +48,18 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
 <?php if ($keywords !== ''): ?>
   <meta name="keywords" content="<?= e($keywords) ?>">
 <?php endif; ?>
-<?php if ($page): ?>
-  <link rel="canonical" href="<?= e($origin . url($pageKey)) ?>">
-<?php foreach (array_keys(CONTENT_LANGS) as $l): ?>
-  <link rel="alternate" hreflang="<?= $l ?>" href="<?= e($origin . url($pageKey, $l)) ?>">
-<?php endforeach; ?>
-  <link rel="alternate" hreflang="x-default" href="<?= e($origin . url($pageKey, 'az')) ?>">
-<?php else: ?>
+<?php if ($noindex): ?>
   <meta name="robots" content="noindex">
 <?php endif; ?>
+<?php if ($page): ?>
+  <link rel="canonical" href="<?= e($origin . $langUrl($lang)) ?>">
+<?php foreach (array_keys(CONTENT_LANGS) as $l): ?>
+  <link rel="alternate" hreflang="<?= $l ?>" href="<?= e($origin . $langUrl($l)) ?>">
+<?php endforeach; ?>
+  <link rel="alternate" hreflang="x-default" href="<?= e($origin . $langUrl('az')) ?>">
+<?php endif; ?>
   <meta name="theme-color" content="#0D0A1F">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="<?= $post ? 'article' : 'website' ?>">
   <meta property="og:site_name" content="<?= SITE_NAME ?>">
   <meta property="og:locale" content="<?= e(ui('locale')) ?>">
   <meta property="og:title" content="<?= e($title) ?>">
@@ -53,7 +67,10 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
   <meta property="og:description" content="<?= e($description) ?>">
 <?php endif; ?>
 <?php if ($page): ?>
-  <meta property="og:url" content="<?= e($origin . url($pageKey)) ?>">
+  <meta property="og:url" content="<?= e($origin . $langUrl($lang)) ?>">
+<?php endif; ?>
+<?php if ($post): ?>
+  <meta property="article:published_time" content="<?= e(date('Y-m-d', strtotime((string)$post['published_at']) ?: time())) ?>">
 <?php endif; ?>
 <?php if ($ogImage): ?>
   <meta property="og:image" content="<?= e($origin . $ogImage) ?>">
@@ -61,7 +78,7 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
   <meta name="twitter:card" content="summary_large_image">
 <?php endif; ?>
 <?php if ($page): ?>
-  <script type="application/ld+json"><?= json_encode(site_schema($pageKey), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+  <script type="application/ld+json"><?= json_encode(site_schema($pageKey, $post), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
 <?php endif; ?>
   <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,12 +129,14 @@ $langUrl = static fn(string $l): string => url($page ? $pageKey : 'home', $l);
 <main id="main">
 <?php if ($isHome): ?>
 <?php elseif ($page): ?>
-  <?php section('page-head', ['name' => $name, 'title' => $h1, 'lead' => $lead]); ?>
+  <?php section('page-head', $post
+      ? ['name' => pick($post, 'title'), 'title' => $h1, 'lead' => $lead, 'parents' => [[$name, url('blog')]], 'date' => post_date($post), 'datetime' => substr((string)$post['published_at'], 0, 10)]
+      : ['name' => $name, 'title' => $h1, 'lead' => $lead]); ?>
 <?php else: ?>
   <?php section('not-found'); ?>
 <?php endif; ?>
 <?php foreach ($sections as $sectionName): ?>
-  <?php section($sectionName, ['pageKey' => $pageKey]); ?>
+  <?php section($sectionName, ['pageKey' => $pageKey, 'post' => $post]); ?>
 <?php endforeach; ?>
 </main>
 

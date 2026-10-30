@@ -52,11 +52,27 @@ if (in_array($segments[0] ?? '', ['ru', 'en'], true)) {
 }
 site_lang($lang);
 
-$pageKey = count($segments) <= 1 ? page_by_slug($segments[0] ?? '') : null;
+$slug = $segments[0] ?? '';
+$pageKey = null;
+$post = null;
+if (count($segments) <= 1) {
+    $pageKey = page_by_slug($slug, $lang);
+    if ($pageKey === null && count($segments) === 1 && ($moved = page_by_slug($slug, $lang, true))) {
+        // An address of another language, e.g. the old /ru/haqqimizda → /ru/o-nas
+        $permanent(url($moved));
+    }
+} elseif (count($segments) === 2 && page_by_slug($slug, $lang, true) === 'blog') {
+    // A blog post: /bloq/<post>, /ru/blog/<post>; an address of another language leads to this one
+    $post = post_by_slug($segments[1], $lang, true);
+    if ($post && $path !== post_url($post)) {
+        $permanent(post_url($post));
+    }
+    $pageKey = $post ? 'blog' : null;
+}
 if ($pageKey === null) {
     http_response_code(404);
     $pageKey = '404';
-} elseif ($path !== url($pageKey)) {
+} elseif (!$post && $path !== url($pageKey)) {
     // One address per page: /ru → /ru/, /haqqimizda/ → /haqqimizda
     $permanent(url($pageKey));
 }

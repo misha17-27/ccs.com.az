@@ -21,6 +21,7 @@ const TEXT_GROUPS = [
     'faq' => ['az' => 'Suallar bölməsi', 'ru' => 'Блок вопросов'],
     'contact' => ['az' => 'Əlaqə bölməsi', 'ru' => 'Блок контактов'],
     'form' => ['az' => 'Müraciət forması', 'ru' => 'Форма заявки'],
+    'blog' => ['az' => 'Bloq', 'ru' => 'Блог'],
     'tiktok' => ['az' => 'TikTok', 'ru' => 'TikTok'],
     'instagram' => ['az' => 'Instagram', 'ru' => 'Instagram'],
     'footer' => ['az' => 'Footer və 404', 'ru' => 'Подвал и 404'],
@@ -296,6 +297,10 @@ const UI_FIELDS = [
     'wa_msg_service' => ['form', 'WhatsApp mesajı: «Xidmət»', 'Сообщение в WhatsApp: «Услуга»', 'line'],
     'wa_msg_message' => ['form', 'WhatsApp mesajı: «Mesaj»', 'Сообщение в WhatsApp: «Сообщение»', 'line'],
 
+    'blog_read' => ['blog', 'Məqalə kartında «Ətraflı oxu» linki', 'Ссылка «Читать статью» в карточке', 'line'],
+    'blog_back' => ['blog', 'Məqalənin altında «Bütün məqalələr» linki', 'Ссылка «Все статьи» под статьёй', 'line'],
+    'blog_empty' => ['blog', 'Hələ məqalə olmayanda mətn', 'Текст, пока статей нет', 'area'],
+
     'tt_follow' => ['tiktok', 'Düymə mətni', 'Текст кнопки', 'line'],
     'ig_follow' => ['instagram', 'Düymə mətni', 'Текст кнопки', 'line'],
 
@@ -310,22 +315,26 @@ const UI_FIELDS = [
 ];
 
 /**
- * Site pages: fixed keys with an editable address, title (H1) and SEO. 'sections' are the blocks the page
+ * Site pages: fixed keys with an editable address per language ('slug' is AZ, 'slug_ru' and 'slug_en' follow /ru/ and /en/),
+ * title (H1) and SEO. 'sections' are the blocks the page
  * shows (app/views/sections); the page text lives in the 'groups' of TEXT_FIELDS and in the
  * 'items' tables, and their translations make up the "Text" status in the admin.
  */
 const PAGES = [
-    'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'groups' => ['hero', 'facts', 'calc', 'tiktok', 'instagram'], 'items' => [],
+    'home' => ['az' => 'Ana səhifə', 'ru' => 'Главная', 'slug' => '', 'slug_ru' => '', 'slug_en' => '', 'groups' => ['hero', 'facts', 'calc', 'tiktok', 'instagram'], 'items' => [],
         'sections' => ['hero', 'about', 'services', 'calc', 'clients', 'experience', 'tiktok', 'contact', 'instagram']],
-    'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'groups' => ['about', 'experience'], 'items' => ['projects'],
+    'about' => ['az' => 'Haqqımızda', 'ru' => 'О нас', 'slug' => 'haqqimizda', 'slug_ru' => 'o-nas', 'slug_en' => 'about-us', 'groups' => ['about', 'experience'], 'items' => ['projects'],
         'sections' => ['about', 'experience', 'clients', 'contact']],
-    'services' => ['az' => 'Xidmətlər (siyahı)', 'ru' => 'Услуги (список)', 'slug' => 'xidmetler', 'groups' => ['services', 'calc'], 'items' => ['services'],
+    'services' => ['az' => 'Xidmətlər (siyahı)', 'ru' => 'Услуги (список)', 'slug' => 'xidmetler', 'slug_ru' => 'uslugi', 'slug_en' => 'services', 'groups' => ['services', 'calc'], 'items' => ['services'],
         'sections' => ['services', 'calc', 'contact']],
-    'clients' => ['az' => 'Müştərilər', 'ru' => 'Клиенты', 'slug' => 'musteriler', 'groups' => ['clients'], 'items' => [],
+    'clients' => ['az' => 'Müştərilər', 'ru' => 'Клиенты', 'slug' => 'musteriler', 'slug_ru' => 'klienty', 'slug_en' => 'clients', 'groups' => ['clients'], 'items' => [],
         'sections' => ['clients', 'experience', 'contact']],
-    'faq' => ['az' => 'Suallar', 'ru' => 'Вопросы', 'slug' => 'suallar', 'groups' => ['faq'], 'items' => ['faqs'],
+    'faq' => ['az' => 'Suallar', 'ru' => 'Вопросы', 'slug' => 'suallar', 'slug_ru' => 'voprosy', 'slug_en' => 'faq', 'groups' => ['faq'], 'items' => ['faqs'],
         'sections' => ['faq', 'contact']],
-    'contact' => ['az' => 'Əlaqə', 'ru' => 'Контакты', 'slug' => 'elaqe', 'groups' => ['contact'], 'items' => [],
+    // Blog: Admin → Blog shows or hides it (menu, footer, sitemap, search engines); posts live at /bloq/<post>
+    'blog' => ['az' => 'Bloq', 'ru' => 'Блог', 'slug' => 'bloq', 'slug_ru' => 'blog', 'slug_en' => 'blog', 'groups' => ['blog'], 'items' => ['posts'],
+        'sections' => ['blog', 'contact']],
+    'contact' => ['az' => 'Əlaqə', 'ru' => 'Контакты', 'slug' => 'elaqe', 'slug_ru' => 'kontakty', 'slug_en' => 'contact', 'groups' => ['contact'], 'items' => [],
         'sections' => ['contact', 'tiktok', 'instagram']],
 ];
 
@@ -758,6 +767,29 @@ const SEED_PAGES = [
             'az' => 'restoran auditi nədir, restoran auditi necə aparılır, restoranın yoxlanılması, xərclərə nəzarət',
             'ru' => 'что такое аудит ресторана, как проводится аудит ресторана, проверка ресторана, контроль затрат',
             'en' => 'what is a restaurant audit, how a restaurant audit works, restaurant inspection, cost control',
+        ],
+    ],
+    'blog' => [
+        ['az' => 'Bloq', 'ru' => 'Блог', 'en' => 'Blog'],
+        [
+            'az' => 'Bloq: restoran auditi və food cost haqqında | Cost Control',
+            'ru' => 'Блог об аудите ресторанов и контроле затрат | Cost Control',
+            'en' => 'Blog on restaurant audits and cost control | Cost Control',
+        ],
+        [
+            'az' => 'Restoran auditi, maya dəyəri (food cost), anbar sayımı və restoran maliyyəsi haqqında praktiki məqalələr — Cost Control komandasından.',
+            'ru' => 'Практические статьи об аудите ресторанов, себестоимости и фудкосте, инвентаризации и финансах ресторана — от команды Cost Control.',
+            'en' => 'Practical articles on restaurant audits, food cost, stock counts and restaurant finance from the Cost Control team.',
+        ],
+        [
+            'az' => 'Bloq: restoran auditi və xərclərə nəzarət',
+            'ru' => 'Блог об аудите ресторанов и контроле затрат',
+            'en' => 'Blog: restaurant audits and cost control',
+        ],
+        [
+            'az' => 'restoran auditi, restoran biznesi üçün məsləhətlər, food cost, maya dəyəri, restoran maliyyəsi',
+            'ru' => 'аудит ресторана, советы ресторатору, фудкост, себестоимость блюд, финансы ресторана',
+            'en' => 'restaurant audit, restaurant business tips, food cost, restaurant finance',
         ],
     ],
     'contact' => [

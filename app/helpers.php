@@ -238,6 +238,22 @@ function store_upload_file(array $file, string $folder): string
     return UPLOADS_URL . '/' . $folder . '/' . $name;
 }
 
+/** Latin address part from a title in AZ, RU or EN: "Restoran auditi nədir?" → restoran-auditi-nedir. */
+function slugify(string $text, int $max = 80): string
+{
+    static $map = [
+        'ə' => 'e', 'ı' => 'i', 'ö' => 'o', 'ü' => 'u', 'ğ' => 'g', 'ş' => 's', 'ç' => 'c',
+        'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'e', 'ж' => 'zh', 'з' => 'z',
+        'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l', 'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r',
+        'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'kh', 'ц' => 'ts', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shch',
+        'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
+    ];
+    // İ and I first: lowercasing İ leaves a combining dot behind
+    $text = strtr(mb_strtolower(str_replace(['İ', 'I'], 'i', $text)), $map);
+    $slug = trim((string)preg_replace('/[^a-z0-9]+/', '-', $text), '-');
+    return rtrim(substr($slug, 0, $max), '-');
+}
+
 /**
  * Scales a stored JPEG photo down to $max px on the long side (phone photos are often 3–5 MB) and
  * turns it upright. Left as it is without GD, or when its EXIF orientation cannot be read.

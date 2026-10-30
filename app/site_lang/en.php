@@ -50,6 +50,10 @@ return [
 
     'faq_ask' => 'Ask on WhatsApp',
 
+    'blog_read' => 'Read more',
+    'blog_back' => 'All articles',
+    'blog_empty' => 'Articles on restaurant audits and cost control are coming soon.',
+
     'contact_address' => 'Address',
     'contact_phone' => 'Phone',
     'contact_whatsapp' => 'WhatsApp',

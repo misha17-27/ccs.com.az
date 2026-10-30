@@ -106,28 +106,38 @@ function site_pages(): array
         }
         $pages = [];
         foreach (PAGES as $key => $def) {
-            $pages[$key] = $rows[$key] ?? ['key' => $key, 'slug' => $def['slug']];
+            $pages[$key] = $rows[$key] ?? ['key' => $key, 'slug' => $def['slug'], 'slug_ru' => $def['slug_ru'], 'slug_en' => $def['slug_en']];
         }
     }
     return $pages;
 }
 
-function page_by_slug(string $slug): ?string
+/** Address part of a page or blog post in a language: the column slug is AZ, slug_ru and slug_en the others (empty — the AZ one). */
+function page_slug(array $page, string $lang): string
+{
+    $slug = $lang === 'az' ? '' : trim((string)($page['slug_' . $lang] ?? ''));
+    return $slug !== '' ? $slug : (string)$page['slug'];
+}
+
+/** Page key by its address in a language; with $anyLang, an address of another language also matches. */
+function page_by_slug(string $slug, string $lang, bool $anyLang = false): ?string
 {
     foreach (site_pages() as $key => $page) {
-        if ($page['slug'] === $slug) {
-            return $key;
+        foreach ($anyLang ? array_keys(CONTENT_LANGS) : [$lang] as $l) {
+            if (page_slug($page, $l) === $slug) {
+                return $key;
+            }
         }
     }
     return null;
 }
 
-/** Address of a page: / and /haqqimizda in AZ, /ru/ and /ru/haqqimizda in other languages. */
+/** Address of a page: / and /haqqimizda in AZ, /ru/ and /ru/o-nas, /en/ and /en/about-us in the others. */
 function url(string $pageKey = 'home', ?string $lang = null, string $hash = ''): string
 {
     $lang ??= site_lang();
-    $slug = site_pages()[$pageKey]['slug'] ?? '';
-    return '/' . ($lang === 'az' ? '' : $lang . '/') . $slug . ($hash !== '' ? '#' . $hash : '');
+    $page = site_pages()[$pageKey] ?? ['slug' => ''];
+    return '/' . ($lang === 'az' ? '' : $lang . '/') . page_slug($page, $lang) . ($hash !== '' ? '#' . $hash : '');
 }
 
 function site_origin(): string
@@ -199,6 +209,91 @@ function site_projects(): array
     );
 }
 
+// ---------- Blog (Admin → Blog) ----------
+
+/** Whether the blog is shown on the site: in the menu, the footer, the sitemap and to search engines. */
+function blog_visible(): bool
+{
+    return setting('blog_visible') === '1';
+}
+
+/** Published posts, newest first; a post dated in the future appears on that day. */
+function site_posts(): array
+{
+    static $posts = null;
+    if ($posts === null) {
+        $stmt = db()->prepare('SELECT * FROM posts WHERE is_active = 1 AND published_at <= ? ORDER BY published_at DESC, id DESC');
+        $stmt->execute([date('Y-m-d')]);
+        $posts = $stmt->fetchAll();
+    }
+    return $posts;
+}
+
+/** Published post by its address in a language; with $anyLang, an address of another language also matches. */
+function post_by_slug(string $slug, string $lang, bool $anyLang = false): ?array
+{
+    foreach (site_posts() as $post) {
+        foreach ($anyLang ? array_keys(CONTENT_LANGS) : [$lang] as $l) {
+            if (page_slug($post, $l) === $slug) {
+                return $post;
+            }
+        }
+    }
+    return null;
+}
+
+/** Address of a post: /bloq/<post> in AZ, /ru/blog/<post>, /en/blog/<post>. */
+function post_url(array $post, ?string $lang = null): string
+{
+    $lang ??= site_lang();
+    return url('blog', $lang) . '/' . page_slug($post, $lang);
+}
+
+/** Date of a post as 30.10.2026. */
+function post_date(array $post): string
+{
+    return date('d.m.Y', strtotime((string)$post['published_at']) ?: time());
+}
+
+/**
+ * Text of a post as HTML. Blocks are separated by an empty line: "## " and "### " start a heading,
+ * "- " lines make a list, "1. " lines a numbered list, anything else a paragraph. Inside them works
+ * the markup of rich() and links: [text](https://…) or [text](/elaqe).
+ */
+function article_html(string $text): string
+{
+    $inline = static fn(string $s): string => preg_replace_callback(
+        '~\[([^\]\n]+)\]\(((?:https?://|/)[^\s)]+)\)~u',
+        static fn(array $m) => '<a href="' . $m[2] . '"' . ($m[2][0] === '/' ? '' : ' target="_blank" rel="noopener"') . '>' . $m[1] . '</a>',
+        rich($s)
+    );
+    $text = str_replace("\r", '', $text);
+    // a heading, and a list right after a line of text, also start a block without an empty line
+    $text = preg_replace('/^(#{2,3}\s[^\n]*)$/mu', "\n$1\n", $text);
+    $text = preg_replace('/^((?!-\s|\d+\.\s)[^\n]+)\n(?=(?:-|\d+\.)\s)/mu', "$1\n\n", $text);
+    $html = '';
+    foreach (preg_split('/\n\s*\n/u', trim($text)) as $block) {
+        $block = trim($block);
+        if ($block === '') {
+            continue;
+        }
+        if (preg_match('/^(#{2,3})\s+(.+)$/u', $block, $m)) {
+            $tag = 'h' . strlen($m[1]);
+            $html .= "<{$tag}>" . $inline($m[2]) . "</{$tag}>\n";
+        } elseif (preg_match('/^(-|\d+\.)\s/u', $block, $m)) {
+            $tag = $m[1] === '-' ? 'ul' : 'ol';
+            $items = preg_split('/\n(?=(?:-|\d+\.)\s)/u', $block);
+            $html .= "<{$tag}>" . implode('', array_map(
+                static fn(string $item) => '<li>' . $inline(preg_replace('/^(?:-|\d+\.)\s+/u', '', $item)) . '</li>',
+                $items
+            )) . "</{$tag}>\n";
+        } else {
+            $html .= '<p>' . $inline($block) . "</p>\n";
+        }
+    }
+    return $html;
+}
+
 // ---------- Contacts (Admin → Settings) ----------
 
 function phone_display(): string
@@ -246,9 +341,9 @@ function tiktok_handle(): string
 
 /**
  * schema.org data of a page (JSON-LD): the company with its services on every page, the website on the
- * home page, breadcrumbs on inner pages and the questions on pages with the FAQ block.
+ * home page, breadcrumbs on inner pages, the questions on pages with the FAQ block and the article on a blog post.
  */
-function site_schema(string $pageKey): array
+function site_schema(string $pageKey, ?array $post = null): array
 {
     $origin = site_origin();
     $pages = site_pages();
@@ -295,10 +390,32 @@ function site_schema(string $pageKey): array
         $graph[] = ['@type' => 'WebSite', '@id' => $origin . '/#website', 'name' => SITE_NAME, 'url' => $origin . url('home'),
             'inLanguage' => site_lang(), 'publisher' => ['@id' => $company]];
     } elseif (isset($pages[$pageKey])) {
-        $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => [
-            ['@type' => 'ListItem', 'position' => 1, 'name' => pick($home, 'name'), 'item' => $origin . url('home')],
-            ['@type' => 'ListItem', 'position' => 2, 'name' => pick($pages[$pageKey], 'name'), 'item' => $origin . url($pageKey)],
-        ]];
+        $crumbs = [[pick($home, 'name'), url('home')], [pick($pages[$pageKey], 'name'), url($pageKey)]];
+        if ($post) {
+            $crumbs[] = [pick($post, 'title'), post_url($post)];
+        }
+        $graph[] = ['@type' => 'BreadcrumbList', 'itemListElement' => array_map(
+            static fn(array $crumb, int $i) => ['@type' => 'ListItem', 'position' => $i + 1, 'name' => $crumb[0], 'item' => $origin . $crumb[1]],
+            $crumbs, array_keys($crumbs)
+        )];
+    }
+
+    if ($post) {
+        $article = [
+            '@type' => 'BlogPosting',
+            'headline' => pick($post, 'title'),
+            'description' => plain(pick($post, 'seo_description') ?: pick($post, 'excerpt')),
+            'datePublished' => date('Y-m-d', strtotime((string)$post['published_at']) ?: time()),
+            'dateModified' => date('c', strtotime((string)$post['updated_at']) ?: time()),
+            'inLanguage' => site_lang(),
+            'mainEntityOfPage' => $origin . post_url($post),
+            'author' => ['@id' => $company],
+            'publisher' => ['@id' => $company],
+        ];
+        if ($post['cover']) {
+            $article['image'] = $origin . $post['cover'];
+        }
+        $graph[] = $article;
     }
 
     $faqs = in_array('faq', PAGES[$pageKey]['sections'] ?? [], true) ? site_faqs() : [];

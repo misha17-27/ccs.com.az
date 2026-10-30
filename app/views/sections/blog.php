@@ -17,7 +17,7 @@ $cover = static function (?string $src, string $alt, string $class, string $load
 <article class="post section" id="bloq">
   <div class="container post__inner">
     <?php if ($post['cover']): ?><?= $cover($post['cover'], pick($post, 'title'), 'post__cover', 'eager') ?><?php endif; ?>
-    <div class="prose"><?= article_html(pick($post, 'body')) ?></div>
+    <div class="prose"><?= post_body_html(pick($post, 'body')) ?></div>
     <a class="link-arrow post__back" href="<?= e(url('blog')) ?>"><svg class="icon icon--flip"><use href="#i-arrow"/></svg> <?= e(ui('blog_back')) ?></a>
   </div>
 </article>

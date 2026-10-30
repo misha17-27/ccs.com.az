@@ -68,7 +68,8 @@ if (is_post()) {
         $values = [
             'title' => post_ml('title', 200),
             'excerpt' => post_ml('excerpt', 600),
-            'body' => post_ml('body', 60000),
+            // the editor's HTML, cleaned; text typed in the source view without tags is read as the plain markup
+            'body' => array_map(static fn(string $html) => clean_html(post_body_html($html)), post_ml('body', 200000)),
             'seo_title' => post_ml('seo_title', 200),
             'seo_description' => post_ml('seo_description', 400),
         ];
@@ -150,7 +151,7 @@ if ($id || get_str('action', 10) === 'new') {
           <small class="hint"><?= e(t('blog.title_hint')) ?></small>
           <?= ml_field('excerpt', t('blog.excerpt'), row_ml($post, 'excerpt'), 'area', false, 200) ?>
           <small class="hint"><?= e(t('blog.excerpt_hint')) ?></small>
-          <?= ml_field('body', t('blog.body'), row_ml($post, 'body'), 'area') ?>
+          <?= ml_field('body', t('blog.body'), array_map('post_body_html', row_ml($post, 'body')), 'rich') ?>
           <small class="hint"><?= e(t('blog.body_hint')) ?></small>
         </section>
         <section class="card stack">

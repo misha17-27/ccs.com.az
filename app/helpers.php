@@ -178,6 +178,216 @@ function text(string $key, string $lang = 'az'): string
     return $value !== '' ? $value : (string)$row['value_az'];
 }
 
+// ---------- Text markup ----------
+
+/** Escapes a text and applies its light markup: **bold**, *accent colour*, line breaks. */
+function rich(string $text): string
+{
+    $html = e($text);
+    $html = preg_replace('/\*\*(.+?)\*\*/su', '<strong>$1</strong>', $html);
+    $html = preg_replace('/\*(.+?)\*/su', '<span class="hl">$1</span>', $html);
+    return nl2br($html, false);
+}
+
+/** The text without markup, for titles, meta tags and alt texts. */
+function plain(string $text): string
+{
+    return trim(preg_replace('/\s+/u', ' ', str_replace('*', '', $text)));
+}
+
+/**
+ * Plain-text markup of a blog post as HTML (posts written before the editor, or typed as text in its
+ * source view). Blocks are separated by an empty line: "## " and "### " start a heading, "- " lines make
+ * a list, "1. " lines a numbered list, anything else a paragraph. Inside them works the markup of rich()
+ * and links: [text](https://…) or [text](/elaqe).
+ */
+function article_html(string $text): string
+{
+    $inline = static fn(string $s): string => preg_replace_callback(
+        '~\[([^\]\n]+)\]\(((?:https?://|/)[^\s)]+)\)~u',
+        static fn(array $m) => '<a href="' . $m[2] . '"' . ($m[2][0] === '/' ? '' : ' target="_blank" rel="noopener"') . '>' . $m[1] . '</a>',
+        rich($s)
+    );
+    $text = str_replace("\r", '', $text);
+    // a heading, and a list right after a line of text, also start a block without an empty line
+    $text = preg_replace('/^(#{2,3}\s[^\n]*)$/mu', "\n$1\n", $text);
+    $text = preg_replace('/^((?!-\s|\d+\.\s)[^\n]+)\n(?=(?:-|\d+\.)\s)/mu', "$1\n\n", $text);
+    $html = '';
+    foreach (preg_split('/\n\s*\n/u', trim($text)) as $block) {
+        $block = trim($block);
+        if ($block === '') {
+            continue;
+        }
+        if (preg_match('/^(#{2,3})\s+(.+)$/u', $block, $m)) {
+            $tag = 'h' . strlen($m[1]);
+            $html .= "<{$tag}>" . $inline($m[2]) . "</{$tag}>\n";
+        } elseif (preg_match('/^(-|\d+\.)\s/u', $block, $m)) {
+            $tag = $m[1] === '-' ? 'ul' : 'ol';
+            $items = preg_split('/\n(?=(?:-|\d+\.)\s)/u', $block);
+            $html .= "<{$tag}>" . implode('', array_map(
+                static fn(string $item) => '<li>' . $inline(preg_replace('/^(?:-|\d+\.)\s+/u', '', $item)) . '</li>',
+                $items
+            )) . "</{$tag}>\n";
+        } else {
+            $html .= '<p>' . $inline($block) . "</p>\n";
+        }
+    }
+    return $html;
+}
+
+/** Text of a blog post as HTML: what the editor saved as it is, the plain markup of older posts converted. */
+function post_body_html(string $body): string
+{
+    return preg_match('~<(p|h[1-6]|ul|ol|li|br|strong|b|em|i|a|div)\b~i', $body) ? $body : article_html($body);
+}
+
+/**
+ * HTML from the blog editor, reduced to what the site styles: paragraphs, H2/H3, lists, bold, italic,
+ * line breaks and links (https, mailto, tel or a site address such as /elaqe). Other tags keep only
+ * their text, and scripts, styles, images and frames are dropped, so text pasted from Word or Google Docs
+ * comes out clean; their bold and italic set with styles are kept.
+ */
+function clean_html(string $html): string
+{
+    if (trim(strip_tags($html)) === '') {
+        return '';
+    }
+    $doc = new DOMDocument();
+    $errors = libxml_use_internal_errors(true);
+    $doc->loadHTML('<?xml encoding="utf-8"?><div>' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET);
+    libxml_clear_errors();
+    libxml_use_internal_errors($errors);
+    $root = null;
+    foreach ($doc->childNodes as $node) {
+        if ($node instanceof DOMElement) {
+            $root = $node;
+            break;
+        }
+    }
+    if (!$root) {
+        return '';
+    }
+
+    $blocks = ['p' => 'p', 'div' => 'p', 'blockquote' => 'p', 'li' => 'li', 'ul' => 'ul', 'ol' => 'ol',
+        'h1' => 'h2', 'h2' => 'h2', 'h3' => 'h3', 'h4' => 'h3', 'h5' => 'h3', 'h6' => 'h3'];
+    $drop = ['script', 'style', 'head', 'title', 'meta', 'link', 'iframe', 'frame', 'object', 'embed', 'svg', 'math',
+        'noscript', 'template', 'img', 'picture', 'video', 'audio', 'canvas', 'form', 'input', 'button', 'select', 'textarea'];
+    $xpath = new DOMXPath($doc);
+    $hasBlocks = static fn(DOMElement $el): bool => $xpath->query('.//p|.//div|.//blockquote|.//li|.//ul|.//ol|.//h1|.//h2|.//h3|.//h4|.//h5|.//h6', $el)->length > 0;
+    $hasText = static fn(string $s): bool => trim(str_replace('&nbsp;', ' ', strip_tags($s))) !== '';
+    // bold and italic: tags, or styles from Word and Google Docs (whose whole paste sits in <b style="font-weight:normal">)
+    $marks = static function (DOMElement $el, string $tag): array {
+        $style = strtolower($el->getAttribute('style'));
+        $normal = preg_match('/(?<![\w-])font-weight\s*:\s*(normal|[1-4]00)\b/', $style);
+        return [
+            !$normal && (in_array($tag, ['b', 'strong'], true) || preg_match('/(?<![\w-])font-weight\s*:\s*(bold|[6-9]00)\b/', $style)),
+            in_array($tag, ['i', 'em'], true) || preg_match('/(?<![\w-])font-style\s*:\s*italic/', $style),
+        ];
+    };
+
+    // One node inside a block: $in is the block it goes into (p, h2, h3, li, ul or ol)
+    $node = function (DOMNode $n, string $in) use (&$node, $blocks, $drop, $marks, $hasText): string {
+        if ($n instanceof DOMText) {
+            return $in === 'ul' || $in === 'ol' ? '' : e(str_replace("\u{a0}", ' ', $n->nodeValue));
+        }
+        if (!$n instanceof DOMElement) {
+            return '';
+        }
+        $tag = strtolower($n->tagName);
+        if (in_array($tag, $drop, true)) {
+            return '';
+        }
+        if ($tag === 'br') {
+            return '<br>';
+        }
+        $children = static function (string $into) use ($n, &$node): string {
+            $html = '';
+            foreach ($n->childNodes as $child) {
+                $html .= $node($child, $into);
+            }
+            return $html;
+        };
+        $block = $blocks[$tag] ?? null;
+        if ($block) {
+            // a list holds items, an item may hold a nested list; any other block keeps just its content
+            $allowed = in_array($in, ['ul', 'ol'], true) ? $block === 'li' : ($in === 'li' && in_array($block, ['ul', 'ol'], true));
+            $inner = $children($allowed ? $block : $in);
+            return $allowed ? "<{$block}>{$inner}</{$block}>" : $inner . ($block === 'p' ? ' ' : '');
+        }
+        $inner = $children($in);
+        if ($tag === 'a') {
+            $href = trim($n->getAttribute('href'));
+            if ($hasText($inner) && preg_match('~^(https?://|mailto:|tel:|/(?!/))~i', $href)) {
+                $external = (bool)preg_match('~^https?://~i', $href);
+                return '<a href="' . e($href) . '"' . ($external ? ' target="_blank" rel="noopener"' : '') . '>' . $inner . '</a>';
+            }
+            return $inner;
+        }
+        [$bold, $italic] = $marks($n, $tag);
+        if ($hasText($inner)) {
+            $inner = $italic ? "<em>{$inner}</em>" : $inner;
+            $inner = $bold ? "<strong>{$inner}</strong>" : $inner;
+        }
+        return $inner;
+    };
+
+    // Top level: blocks as they are, loose text and inline tags gathered into paragraphs
+    $parts = [];
+    $top = function (DOMNode $parent) use (&$top, &$parts, $node, $blocks, $drop, $hasBlocks): void {
+        foreach ($parent->childNodes as $child) {
+            if ($child instanceof DOMElement) {
+                $tag = strtolower($child->tagName);
+                if (in_array($tag, $drop, true)) {
+                    continue;
+                }
+                $block = $blocks[$tag] ?? null;
+                // a <div> around paragraphs, or a list the browser left inside a paragraph: take its parts one by one
+                if (in_array($block, ['p', 'h2', 'h3', 'li'], true) && $hasBlocks($child)) {
+                    $top($child);
+                    continue;
+                }
+                if ($block) {
+                    $block = $block === 'li' ? 'p' : $block;
+                    $inner = '';
+                    foreach ($child->childNodes as $grand) {
+                        $inner .= $node($grand, $block);
+                    }
+                    $parts[] = [$block, $inner];
+                    continue;
+                }
+                if ($hasBlocks($child)) {
+                    $top($child);
+                    continue;
+                }
+            }
+            $parts[] = ['', $node($child, 'p')];
+        }
+    };
+    $top($root);
+
+    $out = [];
+    $buffer = '';
+    $trimBreaks = static fn(string $s): string => trim(preg_replace('~^(\s*<br>)+|(<br>\s*)+$~', '', trim($s)));
+    $flush = static function () use (&$buffer, &$out, $trimBreaks, $hasText): void {
+        if ($hasText($buffer)) {
+            $out[] = '<p>' . $trimBreaks($buffer) . '</p>';
+        }
+        $buffer = '';
+    };
+    foreach ($parts as [$block, $inner]) {
+        if ($block === '') {
+            $buffer .= $inner;
+            continue;
+        }
+        $flush();
+        if (in_array($block, ['ul', 'ol'], true) ? str_contains($inner, '<li>') : $hasText($inner)) {
+            $out[] = "<{$block}>" . ($block === 'ul' || $block === 'ol' ? $inner : $trimBreaks($inner)) . "</{$block}>";
+        }
+    }
+    $flush();
+    return implode("\n", $out);
+}
+
 // ---------- Uploads ----------
 
 /**

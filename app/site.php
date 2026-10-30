@@ -78,21 +78,6 @@ function pick(array $row, string $col): string
     return $value !== '' ? $value : trim((string)($row[$col . '_az'] ?? ''));
 }
 
-/** Escapes a text and applies its light markup: **bold**, *accent colour*, line breaks. */
-function rich(string $text): string
-{
-    $html = e($text);
-    $html = preg_replace('/\*\*(.+?)\*\*/su', '<strong>$1</strong>', $html);
-    $html = preg_replace('/\*(.+?)\*/su', '<span class="hl">$1</span>', $html);
-    return nl2br($html, false);
-}
-
-/** The text without markup, for titles, meta tags and alt texts. */
-function plain(string $text): string
-{
-    return trim(preg_replace('/\s+/u', ' ', str_replace('*', '', $text)));
-}
-
 // ---------- Pages and addresses ----------
 
 /** Pages from Admin → Pages: key => row, in PAGES order. */
@@ -253,45 +238,6 @@ function post_url(array $post, ?string $lang = null): string
 function post_date(array $post): string
 {
     return date('d.m.Y', strtotime((string)$post['published_at']) ?: time());
-}
-
-/**
- * Text of a post as HTML. Blocks are separated by an empty line: "## " and "### " start a heading,
- * "- " lines make a list, "1. " lines a numbered list, anything else a paragraph. Inside them works
- * the markup of rich() and links: [text](https://…) or [text](/elaqe).
- */
-function article_html(string $text): string
-{
-    $inline = static fn(string $s): string => preg_replace_callback(
-        '~\[([^\]\n]+)\]\(((?:https?://|/)[^\s)]+)\)~u',
-        static fn(array $m) => '<a href="' . $m[2] . '"' . ($m[2][0] === '/' ? '' : ' target="_blank" rel="noopener"') . '>' . $m[1] . '</a>',
-        rich($s)
-    );
-    $text = str_replace("\r", '', $text);
-    // a heading, and a list right after a line of text, also start a block without an empty line
-    $text = preg_replace('/^(#{2,3}\s[^\n]*)$/mu', "\n$1\n", $text);
-    $text = preg_replace('/^((?!-\s|\d+\.\s)[^\n]+)\n(?=(?:-|\d+\.)\s)/mu', "$1\n\n", $text);
-    $html = '';
-    foreach (preg_split('/\n\s*\n/u', trim($text)) as $block) {
-        $block = trim($block);
-        if ($block === '') {
-            continue;
-        }
-        if (preg_match('/^(#{2,3})\s+(.+)$/u', $block, $m)) {
-            $tag = 'h' . strlen($m[1]);
-            $html .= "<{$tag}>" . $inline($m[2]) . "</{$tag}>\n";
-        } elseif (preg_match('/^(-|\d+\.)\s/u', $block, $m)) {
-            $tag = $m[1] === '-' ? 'ul' : 'ol';
-            $items = preg_split('/\n(?=(?:-|\d+\.)\s)/u', $block);
-            $html .= "<{$tag}>" . implode('', array_map(
-                static fn(string $item) => '<li>' . $inline(preg_replace('/^(?:-|\d+\.)\s+/u', '', $item)) . '</li>',
-                $items
-            )) . "</{$tag}>\n";
-        } else {
-            $html .= '<p>' . $inline($block) . "</p>\n";
-        }
-    }
-    return $html;
 }
 
 // ---------- Contacts (Admin → Settings) ----------

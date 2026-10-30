@@ -216,6 +216,7 @@ function auth_footer(bool $turnstile = false): void
 /**
  * One field per content language (AZ/RU/EN) with tabs; posts as name[az], name[ru], name[en].
  * $values: ['az' => …, 'ru' => …, 'en' => …]; $limit > 0 shows a "42 / 60" character counter.
+ * $type: 'line', 'area', or 'rich' — a textarea of HTML that admin.js turns into an editor with a toolbar.
  */
 function ml_field(string $name, string $label, array $values, string $type = 'line', bool $required = false, int $limit = 0): string
 {
@@ -233,12 +234,19 @@ function ml_field(string $name, string $label, array $values, string $type = 'li
         $value = (string)($values[$code] ?? '');
         $attrs = 'id="' . $id . '-' . $code . '" name="' . e($name) . '[' . $code . ']" lang="' . $code . '" aria-label="' . e($label . ' (' . $short . ')') . '"'
             . ($required && $code === 'az' ? ' required' : '');
-        $control = $type === 'area'
-            ? '<textarea ' . $attrs . ' rows="4">' . e($value) . '</textarea>'
+        $control = $type === 'area' || $type === 'rich'
+            ? '<textarea ' . $attrs . ($type === 'rich' ? ' data-rich="' . e(rich_editor_labels()) . '"' : '') . ' rows="4">' . e($value) . '</textarea>'
             : '<input type="text" ' . $attrs . ' value="' . e($value) . '">';
         $html .= '<div class="ml__pane" data-ml-pane="' . $code . '"' . ($code === 'az' ? '' : ' hidden') . '>' . $control . '</div>';
     }
     return $html . '</div>';
+}
+
+/** Button labels of the rich text editor (admin.js), as JSON. */
+function rich_editor_labels(): string
+{
+    $keys = ['bold', 'italic', 'h2', 'h3', 'p', 'ul', 'ol', 'list', 'link', 'unlink', 'unlink_title', 'clear', 'source', 'editor', 'link_prompt'];
+    return (string)json_encode(array_combine($keys, array_map(static fn($k) => t('rte.' . $k), $keys)), JSON_UNESCAPED_UNICODE);
 }
 
 /** Cleans one multi-language value posted as [az => …, ru => …, en => …]. */

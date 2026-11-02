@@ -43,8 +43,10 @@ return [
     'calc_hint_invalid' => 'Maya dəyəri, satış qiyməti və hədəf faizi müsbət rəqəm olmalıdır.',
     'calc_hint_ok' => 'Yemək hədəf daxilindədir. Xammal maya dəyəri {max}-a qədər artsa belə, hədəfdə qalırsınız.',
     'calc_hint_warn' => 'Hədəfə çatmaq üçün satış qiymətini {rec}-a qaldırın və ya porsiyanın maya dəyərini {max}-a endirin.',
+    'calc_hint_auto' => 'Hədəf {target} üçün satış qiyməti — {price}. Hər porsiyadan {margin} marja qalır.',
     'calc_cost_default' => '4,20',
     'calc_price_default' => '12,00',
+    'calc_price_auto' => 'avto',
 
     'exp_photos' => '{n} foto',
 

@@ -243,6 +243,26 @@
       return [...p.childNodes];
     };
 
+    // After the target is set, the sale price follows it (and the portion cost) until the price is typed by hand
+    let autoPrice = false;
+    const comma = inPrice.defaultValue.includes(',');
+    const fillPrice = () => {
+      const cost = parse(inCost);
+      const target = parse(inTarget);
+      if (!(cost >= 0) || !(target > 0 && target < 100)) return;
+      // rounded up to the qəpik, so the food cost stays within the target
+      const price = Math.ceil(cost / (target / 100) * 100 - 1e-9) / 100;
+      const value = price.toFixed(2);
+      inPrice.value = comma ? value.replace('.', ',') : value;
+      inPrice.parentElement.classList.remove('is-flash');
+      void inPrice.offsetWidth;
+      inPrice.parentElement.classList.add('is-flash');
+    };
+    const setAuto = (on) => {
+      autoPrice = on;
+      out.auto.hidden = !on;
+    };
+
     const update = () => {
       const cost = parse(inCost);
       const price = parse(inPrice);
@@ -274,7 +294,8 @@
       const margin = price - cost;
       const recPrice = cost / (target / 100);
       const maxCost = price * target / 100;
-      const ok = fc <= target;
+      // a hair of tolerance: 4.20 / 15.00 gives 28.000000000000004%
+      const ok = fc <= target + 1e-9;
 
       out.fc.textContent = pct(fc);
       out.margin.textContent = money(margin);
@@ -287,14 +308,29 @@
       out.meter.style.width = Math.min(fc, 100) + '%';
       out.meter.classList.toggle('is-warn', !ok);
 
-      out.hint.replaceChildren(...fill(ok ? t.hintOk : t.hintWarn, { rec: money(recPrice), max: money(maxCost) }));
+      const hint = autoPrice ? t.hintAuto : ok ? t.hintOk : t.hintWarn;
+      out.hint.replaceChildren(...fill(hint, { rec: money(recPrice), max: money(maxCost), price: money(price), margin: money(margin), target: pct(target) }));
     };
 
     inRange.addEventListener('input', () => {
       inTarget.value = inRange.value;
+      setAuto(true);
+      fillPrice();
       update();
     });
-    [inCost, inPrice, inTarget].forEach((el) => el.addEventListener('input', update));
+    inTarget.addEventListener('input', () => {
+      setAuto(true);
+      fillPrice();
+      update();
+    });
+    inCost.addEventListener('input', () => {
+      if (autoPrice) fillPrice();
+      update();
+    });
+    inPrice.addEventListener('input', () => {
+      setAuto(false);
+      update();
+    });
     calc.addEventListener('submit', (e) => e.preventDefault());
     update();
   }

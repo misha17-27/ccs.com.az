@@ -1346,6 +1346,11 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
 .cfield__input input:hover { border-color: rgba(255, 255, 255, .3); }
 .cfield__input input:focus { outline: none; border-color: var(--blue); background: rgba(47, 107, 255, .07); box-shadow: 0 0 0 4px rgba(47, 107, 255, .2); }
 .cfield__input.is-invalid input { border-color: #FF6B8A; box-shadow: 0 0 0 4px rgba(255, 107, 138, .15); }
+/* the sale price filled in from the target */
+.cfield__tag { display: inline-block; margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: rgba(47, 107, 255, .18); color: var(--blue-2); font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 1px; }
+.cfield__tag[hidden] { display: none; }
+.cfield__input.is-flash input { animation: cfield-flash 1s var(--ease); }
+@keyframes cfield-flash { 0% { border-color: var(--blue-2); background: rgba(47, 107, 255, .22); } 100% { border-color: var(--line-2); background: rgba(255, 255, 255, .04); } }
 .cfield__unit {
   position: absolute;
   right: 16px;

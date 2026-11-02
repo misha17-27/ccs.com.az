@@ -9,6 +9,7 @@ $i18n = [
     'hintInvalid' => ui('calc_hint_invalid'),
     'hintOk' => ui('calc_hint_ok'),
     'hintWarn' => ui('calc_hint_warn'),
+    'hintAuto' => ui('calc_hint_auto'),
 ];
 $note = txt('calc.note');
 // The button preselects the food costing service in the form below
@@ -36,7 +37,7 @@ $costing = current(array_filter(site_services(), static fn($s) => $s['icon'] ===
           </div>
         </div>
         <div class="cfield">
-          <label for="c-price"><?= e(ui('calc_price')) ?></label>
+          <label for="c-price"><?= e(ui('calc_price')) ?> <span class="cfield__tag" data-out="auto" hidden><?= e(ui('calc_price_auto')) ?></span></label>
           <div class="cfield__input">
             <input id="c-price" name="price" type="text" inputmode="decimal" autocomplete="off" value="<?= e(ui('calc_price_default')) ?>">
             <span class="cfield__unit">₼</span>

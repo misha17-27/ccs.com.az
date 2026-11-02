@@ -250,6 +250,7 @@ const UI_FIELDS = [
     'calc_cost_default' => ['calc', 'Maya dəyəri — ilkin rəqəm', 'Себестоимость — начальное значение', 'line'],
     'calc_price' => ['calc', 'Sahə: satış qiyməti', 'Поле: цена продажи', 'line'],
     'calc_price_default' => ['calc', 'Satış qiyməti — ilkin rəqəm', 'Цена продажи — начальное значение', 'line'],
+    'calc_price_auto' => ['calc', 'Satış qiyməti hədəfdən hesablananda — nişan', 'Метка у цены, посчитанной по цели', 'line'],
     'calc_target' => ['calc', 'Sahə: hədəf food cost', 'Поле: целевой фудкост', 'line'],
     'calc_fc' => ['calc', 'Nəticə: food cost', 'Результат: фудкост', 'line'],
     'calc_target_mark' => ['calc', 'Şkalada «hədəf» işarəsi', 'Отметка «цель» на шкале', 'line'],
@@ -262,6 +263,7 @@ const UI_FIELDS = [
     'calc_hint_invalid' => ['calc', 'İzah: rəqəmlər səhvdir', 'Пояснение: неверные цифры', 'area'],
     'calc_hint_ok' => ['calc', 'İzah: hədəf daxilində ({max} — maksimum maya dəyəri)', 'Пояснение: в пределах цели ({max} — максимальная себестоимость)', 'area'],
     'calc_hint_warn' => ['calc', 'İzah: hədəfdən yuxarı ({rec} — tövsiyə olunan qiymət, {max} — maksimum maya dəyəri)', 'Пояснение: выше цели ({rec} — рекомендуемая цена, {max} — максимальная себестоимость)', 'area'],
+    'calc_hint_auto' => ['calc', 'İzah: qiymət hədəfdən hesablananda ({target} — hədəf, {price} — qiymət, {margin} — marja)', 'Пояснение: цена посчитана по цели ({target} — цель, {price} — цена, {margin} — маржа)', 'area'],
 
     'faq_ask' => ['faq', 'WhatsApp-da sual linki', 'Ссылка «Задать вопрос в WhatsApp»', 'line'],
 

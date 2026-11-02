@@ -43,8 +43,10 @@ return [
     'calc_hint_invalid' => 'Ingredient cost, selling price and target percentage must be positive numbers.',
     'calc_hint_ok' => 'This dish is within target. Even if the ingredient cost rises to {max}, you stay on target.',
     'calc_hint_warn' => 'To reach the target, raise the selling price to {rec} or cut the portion cost to {max}.',
+    'calc_hint_auto' => 'For a {target} target the selling price is {price}, leaving {margin} margin per portion.',
     'calc_cost_default' => '4.20',
     'calc_price_default' => '12.00',
+    'calc_price_auto' => 'auto',
 
     'exp_photos' => '{n} photos',
 

@@ -180,8 +180,10 @@ $langUrl = static fn(string $l): string => $post ? post_url($post, $l) : url($pa
     </div>
   </div>
   <div class="container footer__bottom">
-    <p>© <?= date('Y') ?> <?= SITE_NAME ?>. <?= e(ui('footer_rights')) ?></p>
-    <a class="footer__credit" href="https://mguliyev.com/" target="_blank" rel="noopener" lang="en">Site by Mguliyev</a>
+    <div class="footer__legal">
+      <p>© <?= date('Y') ?> <?= SITE_NAME ?>. <?= e(ui('footer_rights')) ?></p>
+      <a class="footer__credit" href="https://mguliyev.com/" target="_blank" rel="noopener" lang="en">Site by Mguliyev</a>
+    </div>
     <a href="#top" class="footer__top"><?= e(ui('footer_top')) ?> <svg class="icon"><use href="#i-arrow-ur"/></svg></a>
   </div>
 </footer>

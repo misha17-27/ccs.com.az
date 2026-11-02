@@ -1148,6 +1148,8 @@ a.lang__btn { display: inline-block; line-height: 1.4; }
   font-size: .84rem;
   color: var(--muted-2);
 }
+.footer__credit { font-size: .78rem; color: var(--muted-2); transition: color .2s; }
+.footer__credit:hover { color: #fff; }
 .footer__top { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
 .footer__top:hover { color: #fff; }
 .footer__top .icon { width: 16px; height: 16px; transform: rotate(-45deg); }
